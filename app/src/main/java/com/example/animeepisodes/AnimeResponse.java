@@ -10,7 +10,7 @@ public class AnimeResponse {
     @SerializedName("meta")
     private meta meta;
 
-    public AnimeResponse(ArrayList<Anime> data, com.example.animeepisodes.meta meta) {
+    public AnimeResponse(ArrayList<Anime> data, meta meta) {
         this.data = data;
         this.meta = meta;
     }

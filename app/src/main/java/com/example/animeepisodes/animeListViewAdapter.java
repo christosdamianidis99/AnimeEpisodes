@@ -61,8 +61,8 @@ public class animeListViewAdapter extends ArrayAdapter<Anime> {
         genreTV.setText(anime.getGenres().toString());
         contentTV.setText(anime.getSynopsis());
 
-        seasonCounter.setText(anime.getSeasonCount());
-        episodeCounter.setText(anime.getEpisodeCount());
+//        seasonCounter.setText(anime.getSeasonCount());
+//        episodeCounter.setText(anime.getEpisodeCount());
 
 
         return convertView;

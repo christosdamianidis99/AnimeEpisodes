@@ -1,16 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical">
+    android:layout_height="250dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_marginTop="15dp"
+    android:layout_marginBottom="15dp"
+    android:background="#E0E0E0"
+    >
 
 
-
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:cardCornerRadius="8dp"
+        app:cardElevation="4dp"
+        app:cardUseCompatPadding="true"
+        app:cardBackgroundColor="#F5F5F5"
+        >
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="200dp"
-            android:orientation="horizontal">
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            >
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -19,9 +32,10 @@
 
                 <ImageView
                     android:id="@+id/animeImage"
-                    android:layout_width="match_parent"
-                    android:layout_height="150dp"
-                    android:src="@mipmap/placeholder" />
+                    style="@style/MatchParentImage"
+                    android:src="@mipmap/placeholder"
+                    android:contentDescription="Image Description"
+                    />
 
             </LinearLayout>
 
@@ -46,6 +60,8 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:gravity="center_horizontal"
+                            android:layout_marginTop="5dp"
+                            android:fontFamily="@font/manga_temple_regular"
                             android:text="Tittle" />
 
                         <TextView
@@ -54,15 +70,20 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="10dp"
                             android:gravity="center_horizontal"
+                            android:fontFamily="@font/manga_temple_regular"
+
                             android:text="Genre" />
 
                         <TextView
                             android:id="@+id/contentTV"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
+                            android:layout_height="100dp"
                             android:layout_marginTop="10dp"
-                            android:maxEms="20"
+                            android:maxLines="5"
+                            android:ellipsize="end"
                             android:gravity="center_horizontal"
+                            android:fontFamily="@font/manga_temple_regular"
+
                             android:text="Content" />
                     </LinearLayout>
 
@@ -72,6 +93,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
+                        android:layout_marginBottom="10dp"
                         android:layout_gravity="bottom"
                         android:orientation="horizontal">
 
@@ -86,7 +108,7 @@
                                 android:id="@+id/plusSeason"
                                 android:layout_width="20dp"
                                 android:layout_height="20dp"
-                                android:background="@color/white"
+                                android:background="#F5F5F5"
                                 android:src="@drawable/add_icon"
                                 android:layout_gravity="start" />
 
@@ -96,13 +118,15 @@
                                 android:gravity="center_vertical"
                                 android:text="Season"
                                 android:layout_marginLeft="5dp"
+                                android:fontFamily="@font/manga_temple_regular"
+
                                 android:layout_marginRight="5dp"/>
 
                             <ImageButton
                                 android:id="@+id/minusSeason"
                                 android:layout_width="20dp"
                                 android:layout_height="20dp"
-                                android:background="@color/white"
+                                android:background="#F5F5F5"
                                 android:src="@drawable/minus_icon"
                                 android:layout_gravity="right" />
 
@@ -126,7 +150,7 @@
                                 android:id="@+id/plusEpisode"
                                 android:layout_width="20dp"
                                 android:layout_height="20dp"
-                                android:background="@color/white"
+                                android:background="#F5F5F5"
                                 android:src="@drawable/add_icon"
                                 android:layout_gravity="start" />
 
@@ -142,8 +166,10 @@
                                 android:id="@+id/minusEpisode"
                                 android:layout_width="20dp"
                                 android:layout_height="20dp"
-                                android:background="@color/white"
+                                android:background="#F5F5F5"
                                 android:src="@drawable/minus_icon"
+                                android:fontFamily="@font/manga_temple_regular"
+
                                 android:layout_gravity="right" />
                             <TextView
                                 android:id="@+id/episodeCounter"
@@ -166,5 +192,5 @@
 
 
         </LinearLayout>
-
+</androidx.cardview.widget.CardView>
 </LinearLayout>

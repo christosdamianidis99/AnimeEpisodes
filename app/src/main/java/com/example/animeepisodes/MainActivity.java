@@ -4,9 +4,14 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 
+import android.content.Context;
+import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
@@ -24,44 +29,51 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.http.GET;
-import retrofit2.http.Header;
 import retrofit2.http.Headers;
-import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 public class MainActivity extends AppCompatActivity {
     ProgressBar progressBarMain;
+    ImageView searchMenuBtn;
     public static OkHttpClient okHttpClient;
     public static Retrofit retrofit;
     ListView animeListView;
-    SearchView animeSearchView;
+
     public  animeListViewAdapter adapter;
     public  ArrayList<Anime> myAnime;
+    public static int MODE;
 
-    interface RequestData{
+    interface RequestDataMain {
         @Headers("X-RapidAPI-Key: " + "c5462cadcfmshfba151667d49f0bp11efbdjsn83afd80209c5")
         @GET("anime")
         Call<AnimeResponse> getData(@Query("page") String myPage, @Query("size") String mySize);
     }
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        MODE=1;
         initWidget();
         progressBarMain.setVisibility(View.VISIBLE);
 //    setOkHttpClient();
     setRetrofit();
-
-
-
-//        setAnimeList();
+        searchMenuBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(MainActivity.this,SearchViewActivity.class);
+                startActivity(i);
+            }
+        });
 
 
     }
 
     private void initWidget() {
         animeListView = findViewById(R.id.animListView);
-        animeSearchView = findViewById(R.id.animeSearchView);
+        searchMenuBtn = findViewById(R.id.searchMenuBtn);
         progressBarMain = findViewById(R.id.progressBarMain);
     }
 
@@ -100,8 +112,8 @@ public class MainActivity extends AppCompatActivity {
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
-        RequestData requestData = retrofit.create(RequestData.class);
-        requestData.getData("1","10").enqueue(new Callback<AnimeResponse>() {
+        RequestDataMain requestDataMain = retrofit.create(RequestDataMain.class);
+        requestDataMain.getData("1","10").enqueue(new Callback<AnimeResponse>() {
             @Override
             public void onResponse(Call<AnimeResponse> call, Response<AnimeResponse> response) {
                 if (response.isSuccessful())
@@ -121,53 +133,12 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<AnimeResponse> call, Throwable t) {
-
+                Toast.makeText(MainActivity.this, t.toString(), Toast.LENGTH_LONG).show();
             }
         });
     }
 
-//    public void setAnimeList()
-//    {
-//        final animeApi myanimeApi = retrofit.create(animeApi.class);
-//
-//        // Specify the correct values for "page" and "size"
-//        String page = "1";
-//        String size = "10";
-//
-//        Call<AnimeResponse> createResponse = myanimeApi.createAnimeBody(page, size);
-//
-//
-//
-//        createResponse.enqueue(new Callback<AnimeResponse>() {
-//            @Override
-//            public void onResponse(Call<AnimeResponse> call, @NonNull Response<AnimeResponse> response) {
-//                if (response.isSuccessful()) {
-//                    // Handle the successful response here
-//                    AnimeResponse animeResponse = response.body();
-//                    System.out.println(animeResponse.toString());
-//                    // Process the data as needed
-//                } else {
-//                    try {
-//                        System.out.println(response.errorBody().string());
-//                    } catch (IOException e) {
-//                        throw new RuntimeException(e);
-//                    }
-//                    System.out.println(response.errorBody().toString());
-//                    System.out.println(response.errorBody().byteStream());
-//                    System.out.println(response.errorBody().charStream());
-//                    System.out.println(response.errorBody().source());
-//
-//                    System.out.println(response.body().toString());
-//                }
-////                System.out.println(response.errorBody());
-//
-//
-//            }
-//
-//            @Override
-//            public void onFailure(@NonNull Call<AnimeResponse> call, @NonNull Throwable t) {
-//                Log.e("Request Failure", t.toString());
-//            }
-//        });
-//    }
+
+
+
 }

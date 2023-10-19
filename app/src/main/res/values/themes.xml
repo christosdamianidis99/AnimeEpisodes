@@ -1,8 +1,8 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
     <style name="Base.Theme.AnimeEpisodes" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <item name="colorPrimary">@color/shonen_blue</item>
+        <item name="colorPrimaryDark">@color/ninja_black</item> <!-- For the status bar color -->
     </style>
 
     <style name="Theme.AnimeEpisodes" parent="Base.Theme.AnimeEpisodes" />

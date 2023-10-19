@@ -6,11 +6,50 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
+    <LinearLayout
+        android:id="@+id/linToolBar"
+        android:layout_width="match_parent"
+        android:layout_height="?actionBarSize"
+        android:orientation="horizontal"
+        android:paddingStart="15dp"
+        android:background="@color/shonen_blue"
+        android:paddingEnd="15dp">
 
-    <androidx.appcompat.widget.SearchView
-        android:id="@+id/animeSearchView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+
+
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Anime Counter"
+            android:textSize="20sp"
+            android:fontFamily="@font/manga_temple_regular"
+            android:textColor="@color/white"
+            android:layout_gravity="center|center_vertical"/>
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+
+        <ImageView
+            android:id="@+id/searchMenuBtn"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            app:srcCompat="@drawable/search_icon"
+            android:layout_gravity="end|center"
+            app:tint="@color/white"/>
+    </LinearLayout>
+
+
+
+
 <androidx.coordinatorlayout.widget.CoordinatorLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -30,7 +69,7 @@ android:layout_gravity="center_horizontal|center_vertical"
     android:id="@+id/animListView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_below="@id/animeSearchView"
+    android:layout_below="@id/linToolBar"
     android:layout_marginTop="10dp"/>
 
 </RelativeLayout>

@@ -2,4 +2,15 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="sakura_pink">#FFC0CB</color>
+    <color name="shonen_blue">#007FFF</color>
+    <color name="moe_green">#00FF00</color>
+    <color name="villain_purple">#800080</color>
+    <color name="otaku_orange">#FFA500</color>
+    <color name="dark_crimson">#8B0000</color>
+    <color name="shadow_black">#000000</color>
+    <color name="demon_purple">#800080</color>
+    <color name="ninja_black">#1E1E1E</color>
+    <color name="vampire_red">#8B0000</color>
+
 </resources>

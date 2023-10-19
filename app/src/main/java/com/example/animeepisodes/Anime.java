@@ -34,8 +34,8 @@ private String thumb;
     @SerializedName("type")
 private String type;
 
-    private int seasonCount;
-    private int episodeCount;
+    private int seasonCount=0;
+    private int episodeCount=0;
 
     public Anime(int _id, String title, ArrayList<String> alternativeTitles, int ranking, ArrayList<String> genres, int episodes, boolean hasEpisode, boolean hasRanking, String image, String link, String status, String synopsis, String thumb, String type, int seasonCount, int episodeCount) {
         this._id = _id;
@@ -183,7 +183,21 @@ private String type;
     public void setEpisodeCount(int episodeCount) {
         this.episodeCount = episodeCount;
     }
+    public void incrementSeason() {
+        seasonCount++;
+    }
 
+    public void decrementSeason() {
+        seasonCount--;
+    }
+
+    public void incrementEpisode() {
+        episodeCount++;
+    }
+
+    public void decrementEpisode() {
+        episodeCount--;
+    }
     @Override
     public String toString() {
         return "Anime{" +

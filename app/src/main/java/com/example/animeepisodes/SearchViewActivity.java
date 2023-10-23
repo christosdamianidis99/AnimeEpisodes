@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -27,6 +28,7 @@ import retrofit2.http.Query;
 
 public class SearchViewActivity extends AppCompatActivity {
     SearchView animeSearchView;
+    DatabaseHelper databaseHelper;
     public static Retrofit retrofit;
     public ArrayList<Anime> searchViewAnime;
     ListView animListViewSearchActivity;
@@ -78,10 +80,20 @@ public class SearchViewActivity extends AppCompatActivity {
             }
         });
 
+        databaseHelper = new DatabaseHelper(getApplicationContext());
 
     }
 
     private void setSearchViewClickListener() {
+        animListViewSearchActivity.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+            Anime anim = (Anime) adapterView.getAdapter().getItem(i);
+            databaseHelper.addAnime(anim.getTitle(),anim.getGenres().toString(),String.valueOf(anim.getEpisodes()),anim.getSynopsis(),"0","0",anim.getImage());
+                Intent i1 = new Intent(SearchViewActivity.this,MainActivity.class);
+                startActivity(i1);
+            }
+        });
     }
 
     void initWidgets()

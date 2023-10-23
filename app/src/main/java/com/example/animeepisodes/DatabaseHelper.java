@@ -17,8 +17,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String TABLE_NAME = "my_anime_episodes_db";
     public static final String COLUMN_ID = "_id";
     public static final String COLUMN_TITLE = "anime_title";
-    public static final String COLUMN_SEASON = "anime_season";
+
+    public static final String COLUMN_GENRES = "anime_genres";
+    public static final String COLUMN_CONTENT = "anime_content";
+    public static final String COLUMN_TOTALEPISODES = "anime_total_episode";
+    public static final String COLUMN_IMAGE = "anime_image";
     public static final String COLUMN_EPISODE = "anime_episode";
+    public static final String COLUMN_SEASON = "anime_season";
+
+
 
     public DatabaseHelper(@Nullable Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -27,17 +34,52 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
+
         String query = "CREATE TABLE " + TABLE_NAME +
                 " (" + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                COLUMN_TITLE + " TEXT, " +
+                COLUMN_TITLE + " TEXT," +
+                COLUMN_GENRES + " TEXT," +
+                COLUMN_TOTALEPISODES+" TEXT," +
+                COLUMN_CONTENT+" TEXT," +
+                COLUMN_IMAGE+" TEXT," +
                 COLUMN_SEASON + " INTEGER, " +
-                COLUMN_EPISODE + " INTEGER);";    }
+                COLUMN_EPISODE + " INTEGER);";
+
+        db.execSQL(query);
+    }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
         onCreate(db);
 
+    }
+    public boolean isTableEmpty() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT COUNT(*) FROM my_anime_episodes_db", null);
+        cursor.moveToFirst();
+        int count = cursor.getInt(0);
+        cursor.close();
+        db.close();
+        return count == 0;
+    }
+    void addAnime(String title,String genre,String totalepisodes,String content,String season,String episode,String image)
+    {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+
+        cv.put(COLUMN_TITLE, title);
+        cv.put(COLUMN_GENRES, genre);
+        cv.put(COLUMN_TOTALEPISODES, totalepisodes);
+        cv.put(COLUMN_CONTENT, content);
+        cv.put(COLUMN_SEASON, season);
+        cv.put(COLUMN_EPISODE, episode);
+        cv.put(COLUMN_IMAGE, image);
+
+        long result = db.insert(TABLE_NAME, null, cv);
+        if (result == -1) {
+            Toast.makeText(context, "Data Failed", Toast.LENGTH_SHORT).show();
+        }
     }
 
     void addAnime(String title, int season, int episode)
@@ -56,7 +98,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     }
 
-    Cursor readAllAniem()
+    Cursor readAllAnim()
     {
         String query = "SELECT * FROM " + TABLE_NAME;
         SQLiteDatabase db = this.getReadableDatabase();

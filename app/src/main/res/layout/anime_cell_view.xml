@@ -45,12 +45,12 @@
                 android:orientation="vertical">
 
                 <androidx.coordinatorlayout.widget.CoordinatorLayout
-                    xmlns:android="http://schemas.android.com/apk/res/android"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
 
 
                     <LinearLayout
+                        android:id="@+id/allContentLayout"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="vertical">
@@ -80,13 +80,60 @@
                             android:layout_width="match_parent"
                             android:layout_height="100dp"
                             android:layout_marginTop="10dp"
-                            android:maxLines="5"
+                            android:maxLines="4"
                             android:ellipsize="end"
                             android:gravity="center_horizontal"
                             android:fontFamily="@font/manga_temple_regular"
 
                             android:text="Content" />
                     </LinearLayout>
+                    <LinearLayout
+                        android:id="@+id/linLayTotals"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginBottom="40dp"
+                        android:layout_gravity="bottom"
+                        android:orientation="horizontal">
+
+
+
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:gravity="center_vertical"
+                                android:text="Anime total episodes"
+                                android:layout_marginLeft="5dp"
+                                android:fontFamily="@font/manga_temple_regular"
+
+                                android:layout_marginRight="5dp"/>
+
+                            <TextView
+                                android:id="@+id/animeTotalEpisodes"
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:gravity="center_vertical"
+                                android:text="0"
+                                android:layout_marginLeft="2dp"
+                                android:fontFamily="@font/manga_temple_regular"
+
+                                android:layout_marginRight="5dp"/>
+                        </LinearLayout>
+
+
+
+
+
+
+
+                    </LinearLayout>
+
 
 
                     <LinearLayout

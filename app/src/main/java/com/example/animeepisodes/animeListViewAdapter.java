@@ -47,6 +47,7 @@ public class animeListViewAdapter extends ArrayAdapter<Anime> {
                 TextView titleTV = convertView.findViewById(R.id.titleTV);
                 TextView genreTV = convertView.findViewById(R.id.genreTV);
                 TextView contentTV = convertView.findViewById(R.id.contentTV);
+                TextView totalEpisodesTV= convertView.findViewById(R.id.animeTotalEpisodes);
                 LinearLayout linLayEpSeason = convertView.findViewById(R.id.linLaySeasonEpisode);
 
 
@@ -60,6 +61,7 @@ public class animeListViewAdapter extends ArrayAdapter<Anime> {
                 titleTV.setText(anime.getTitle());
                 genreTV.setText(anime.getGenres().toString());
                 contentTV.setText(anime.getSynopsis());
+                totalEpisodesTV.setText(anime.getEpisodes());
                 linLayEpSeason.setVisibility(View.GONE);
 
             } else if (MainActivity.MODE==1) {
@@ -68,6 +70,7 @@ public class animeListViewAdapter extends ArrayAdapter<Anime> {
                 TextView titleTV = convertView.findViewById(R.id.titleTV);
                 TextView genreTV = convertView.findViewById(R.id.genreTV);
                 TextView contentTV = convertView.findViewById(R.id.contentTV);
+                TextView totalEpisodesTV= convertView.findViewById(R.id.animeTotalEpisodes);
                 LinearLayout linLayEpSeason = convertView.findViewById(R.id.linLaySeasonEpisode);
 
 
@@ -80,6 +83,7 @@ public class animeListViewAdapter extends ArrayAdapter<Anime> {
                 titleTV.setText(anime.getTitle());
                 genreTV.setText(anime.getGenres().toString());
                 contentTV.setText(anime.getSynopsis());
+                totalEpisodesTV.setText(anime.getEpisodes());
                 linLayEpSeason.setVisibility(View.VISIBLE);
                 plusMinusClickListeners(convertView,anime);
 

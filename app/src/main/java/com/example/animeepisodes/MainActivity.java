@@ -6,6 +6,7 @@ import androidx.appcompat.widget.SearchView;
 
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -35,6 +36,7 @@ import retrofit2.http.Query;
 public class MainActivity extends AppCompatActivity {
     ProgressBar progressBarMain;
     ImageView searchMenuBtn;
+    DatabaseHelper databaseHelper;
     public static OkHttpClient okHttpClient;
     public static Retrofit retrofit;
     ListView animeListView;
@@ -55,6 +57,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        databaseHelper = new DatabaseHelper(getApplicationContext());
         MODE=1;
         initWidget();
         progressBarMain.setVisibility(View.VISIBLE);
@@ -105,37 +108,50 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public  void setRetrofit() {
-        String baseUrl = "https://anime-db.p.rapidapi.com/";
-        retrofit = new Retrofit.Builder()
-                .baseUrl(baseUrl)
+        if (!databaseHelper.isTableEmpty())
+        {
+        Cursor cursor = databaseHelper.readAllAnim();
+        if (cursor.isFirst())
+        {
+//            do {
+////                Anime anime = new Anime(cursor.getString(0),cursor.getString(1),cursor.getString(2),cursor.getString(3),cursor.getString())
+//            };
+        }
+        }else
+        {
+            String baseUrl = "https://anime-db.p.rapidapi.com/";
+            retrofit = new Retrofit.Builder()
+                    .baseUrl(baseUrl)
 
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .build();
 
-        RequestDataMain requestDataMain = retrofit.create(RequestDataMain.class);
-        requestDataMain.getData("1","10").enqueue(new Callback<AnimeResponse>() {
-            @Override
-            public void onResponse(Call<AnimeResponse> call, Response<AnimeResponse> response) {
-                if (response.isSuccessful())
-                {
-                    System.out.println(response.body().toString());
-                    myAnime=response.body().getData();
-                    adapter=new animeListViewAdapter(MainActivity.this,myAnime);
-                    animeListView.setAdapter(adapter);
-                    progressBarMain.setVisibility(View.GONE);
-                }else
-                {
-                    System.out.println(response.errorBody());
-                    Toast.makeText(MainActivity.this, "SYSTEM ERROR", Toast.LENGTH_LONG).show();
-                    progressBarMain.setVisibility(View.GONE);
+            RequestDataMain requestDataMain = retrofit.create(RequestDataMain.class);
+            requestDataMain.getData("1","10").enqueue(new Callback<AnimeResponse>() {
+                @Override
+                public void onResponse(Call<AnimeResponse> call, Response<AnimeResponse> response) {
+                    if (response.isSuccessful())
+                    {
+                        System.out.println(response.body().toString());
+                        myAnime=response.body().getData();
+                        adapter=new animeListViewAdapter(MainActivity.this,myAnime);
+                        animeListView.setAdapter(adapter);
+                        progressBarMain.setVisibility(View.GONE);
+                    }else
+                    {
+                        System.out.println(response.errorBody());
+                        Toast.makeText(MainActivity.this, "SYSTEM ERROR", Toast.LENGTH_LONG).show();
+                        progressBarMain.setVisibility(View.GONE);
+                    }
                 }
-            }
 
-            @Override
-            public void onFailure(Call<AnimeResponse> call, Throwable t) {
-                Toast.makeText(MainActivity.this, t.toString(), Toast.LENGTH_LONG).show();
-            }
-        });
+                @Override
+                public void onFailure(Call<AnimeResponse> call, Throwable t) {
+                    Toast.makeText(MainActivity.this, t.toString(), Toast.LENGTH_LONG).show();
+                }
+            });
+        }
+
     }
 
 

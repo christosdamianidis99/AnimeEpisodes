@@ -4,11 +4,15 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.net.ConnectivityManager;
+import android.net.NetworkCapabilities;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -19,6 +23,7 @@ import android.widget.Toast;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.Interceptor;
@@ -34,22 +39,15 @@ import retrofit2.http.Headers;
 import retrofit2.http.Query;
 
 public class MainActivity extends AppCompatActivity {
-    ProgressBar progressBarMain;
+    //    ProgressBar progressBarMain;
     ImageView searchMenuBtn;
     DatabaseHelper databaseHelper;
-    public static OkHttpClient okHttpClient;
-    public static Retrofit retrofit;
+
     ListView animeListView;
 
-    public  animeListViewAdapter adapter;
-    public  ArrayList<Anime> myAnime;
+    public animeListViewAdapter adapter;
+    public ArrayList<Anime> myAnime;
     public static int MODE;
-
-    interface RequestDataMain {
-        @Headers("X-RapidAPI-Key: " + "c5462cadcfmshfba151667d49f0bp11efbdjsn83afd80209c5")
-        @GET("anime")
-        Call<AnimeResponse> getData(@Query("page") String myPage, @Query("size") String mySize);
-    }
 
 
 
@@ -58,15 +56,27 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         databaseHelper = new DatabaseHelper(getApplicationContext());
-        MODE=1;
+        MODE = 1;
         initWidget();
-        progressBarMain.setVisibility(View.VISIBLE);
 //    setOkHttpClient();
-    setRetrofit();
+        setRetrofit();
         searchMenuBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(MainActivity.this,SearchViewActivity.class);
+
+//                ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+//                NetworkCapabilities networkCapabilities = connectivityManager.getNetworkCapabilities(connectivityManager.getActiveNetwork());
+//
+//                if (networkCapabilities != null && networkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)) {
+//                    // There is an internet connection, so start the activity
+//                    Intent i = new Intent(MainActivity.this, SearchViewActivity.class);
+//                    startActivity(i);
+//                } else {
+//                    // No internet connection, show a Toast message
+//                    Toast.makeText(MainActivity.this, "No internet connection", Toast.LENGTH_SHORT).show();
+//                }
+
+                Intent i = new Intent(MainActivity.this, SearchViewActivity.class);
                 startActivity(i);
             }
         });
@@ -77,84 +87,60 @@ public class MainActivity extends AppCompatActivity {
     private void initWidget() {
         animeListView = findViewById(R.id.animListView);
         searchMenuBtn = findViewById(R.id.searchMenuBtn);
-        progressBarMain = findViewById(R.id.progressBarMain);
     }
 
-    public static void setOkHttpClient() {
-        okHttpClient = new OkHttpClient.Builder()
-                .readTimeout(45, TimeUnit.SECONDS)
-                .connectTimeout(45, TimeUnit.SECONDS)
-                .writeTimeout(45, TimeUnit.SECONDS)
-                .addInterceptor(new Interceptor() {
-                    @NonNull
-                    @Override
-                    public okhttp3.Response intercept(@NonNull Chain chain) throws IOException {
-                        Request original = chain.request();
 
-                        Request request = original.newBuilder()
-                                .url("https://anime-db.p.rapidapi.com/anime")
-                                .header("X-RapidAPI-Key", "c5462cadcfmshfba151667d49f0bp11efbdjsn83afd80209c5")
-                                .header("X-RapidAPI-Host", "anime-db.p.rapidapi.com")
-                                .method(original.method(), original.body())
-                                .build();
+    public void setRetrofit() {
+        myAnime = new ArrayList<>();
+        if (!databaseHelper.isTableEmpty("my_anime_episodes_db")) {
+            Cursor cursor = databaseHelper.readAllAnim();
+            cursor.moveToFirst();
+            if (cursor.isFirst()) {
+                do {
+                    String arrayListString = cursor.getString(2);
+                    // Remove the brackets and split the string into an array of values
+                    String withoutBrackets = arrayListString.substring(1, arrayListString.length() - 1);
+                    String[] values = withoutBrackets.split(",\\s*");
 
-                        return chain.proceed(request);
+// Create an ArrayList and add the values to it
+                    ArrayList<String> arrayList = new ArrayList<>();
+                    for (String value : values) {
+                        arrayList.add(value);
                     }
-                })
-                .build();
 
-        //                .addInterceptor(new ApiInterceptor("c5462cadcfmshfba151667d49f0bp11efbdjsn83afd80209c5","anime-db.p.rapidapi.com"))
+
+                    Anime anime = new Anime(
+                            cursor.getInt(0),
+                            cursor.getString(1),
+                            arrayList,
+                            cursor.getInt(3),
+                            cursor.getString(5),
+                            cursor.getString(4),
+                            cursor.getInt(6),
+                            cursor.getInt(7));
+
+                    myAnime.add(anime);
+                } while (cursor.moveToNext());
+
+
+
+            }
+
+            if (!myAnime.isEmpty()) {
+                adapter = new animeListViewAdapter(MainActivity.this, myAnime,this);
+                animeListView.setDivider(new ColorDrawable(Color.TRANSPARENT));
+                animeListView.setAdapter(adapter);
+            }
+
+        }
+    }
+    public static void refresh(Activity activity)
+    {
+        activity.finish();
+        activity.overridePendingTransition(0, 0);
+        activity.startActivity(activity.getIntent());
+        activity.overridePendingTransition(0, 0);
+
 
     }
-
-    public  void setRetrofit() {
-        if (!databaseHelper.isTableEmpty())
-        {
-        Cursor cursor = databaseHelper.readAllAnim();
-        if (cursor.isFirst())
-        {
-//            do {
-////                Anime anime = new Anime(cursor.getString(0),cursor.getString(1),cursor.getString(2),cursor.getString(3),cursor.getString())
-//            };
-        }
-        }else
-        {
-            String baseUrl = "https://anime-db.p.rapidapi.com/";
-            retrofit = new Retrofit.Builder()
-                    .baseUrl(baseUrl)
-
-                    .addConverterFactory(GsonConverterFactory.create())
-                    .build();
-
-            RequestDataMain requestDataMain = retrofit.create(RequestDataMain.class);
-            requestDataMain.getData("1","10").enqueue(new Callback<AnimeResponse>() {
-                @Override
-                public void onResponse(Call<AnimeResponse> call, Response<AnimeResponse> response) {
-                    if (response.isSuccessful())
-                    {
-                        System.out.println(response.body().toString());
-                        myAnime=response.body().getData();
-                        adapter=new animeListViewAdapter(MainActivity.this,myAnime);
-                        animeListView.setAdapter(adapter);
-                        progressBarMain.setVisibility(View.GONE);
-                    }else
-                    {
-                        System.out.println(response.errorBody());
-                        Toast.makeText(MainActivity.this, "SYSTEM ERROR", Toast.LENGTH_LONG).show();
-                        progressBarMain.setVisibility(View.GONE);
-                    }
-                }
-
-                @Override
-                public void onFailure(Call<AnimeResponse> call, Throwable t) {
-                    Toast.makeText(MainActivity.this, t.toString(), Toast.LENGTH_LONG).show();
-                }
-            });
-        }
-
-    }
-
-
-
-
 }

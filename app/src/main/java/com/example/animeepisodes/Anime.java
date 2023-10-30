@@ -37,6 +37,18 @@ private String type;
     private int seasonCount=0;
     private int episodeCount=0;
 
+    public Anime() {
+    }
+
+    public Anime(int _id, String title, ArrayList<String> alternativeTitles, int episodes, String image, String synopsis) {
+        this._id = _id;
+        this.title = title;
+        this.alternativeTitles = alternativeTitles;
+        this.episodes = episodes;
+        this.image = image;
+        this.synopsis = synopsis;
+    }
+
     public Anime(int _id, String title, ArrayList<String> genres, int episodes, String image, String synopsis, int seasonCount, int episodeCount) {
         this._id = _id;
         this.title = title;

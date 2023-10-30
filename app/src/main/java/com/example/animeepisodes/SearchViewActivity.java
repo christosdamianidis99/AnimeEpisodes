@@ -5,6 +5,7 @@ import androidx.appcompat.widget.SearchView;
 
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -47,7 +48,9 @@ public class SearchViewActivity extends AppCompatActivity {
         MainActivity.MODE=2;
         setContentView(R.layout.activity_search_view);
         initWidgets();
+        databaseHelper = new DatabaseHelper(getApplicationContext());
         progressBarSearchView.setVisibility(View.VISIBLE);
+        animeSearchView.setVisibility(View.GONE);
         setAnimeSearchView();
         setSearchViewClickListener();
         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -80,7 +83,7 @@ public class SearchViewActivity extends AppCompatActivity {
             }
         });
 
-        databaseHelper = new DatabaseHelper(getApplicationContext());
+
 
     }
 
@@ -89,7 +92,7 @@ public class SearchViewActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
             Anime anim = (Anime) adapterView.getAdapter().getItem(i);
-            databaseHelper.addAnime(anim.getTitle(),anim.getGenres().toString(),String.valueOf(anim.getEpisodes()),anim.getSynopsis(),"0","0",anim.getImage());
+            databaseHelper.addAnime(String.valueOf(anim.get_id()),anim.getTitle(),anim.getGenres().toString(),String.valueOf(anim.getEpisodes()),anim.getSynopsis(),"0","0",anim.getImage());
                 Intent i1 = new Intent(SearchViewActivity.this,MainActivity.class);
                 startActivity(i1);
             }
@@ -104,37 +107,94 @@ public class SearchViewActivity extends AppCompatActivity {
 }
 
     public void setAnimeSearchView()
-    {   String baseUrl = "https://anime-db.p.rapidapi.com/";
-        retrofit = new Retrofit.Builder()
-                .baseUrl(baseUrl)
+    {
+        searchViewAnime=new ArrayList<>();
+        if (!databaseHelper.isTableEmpty("search_anime_episodes_db"))
+        {
 
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
+            Cursor cursor = databaseHelper.readAllSearch();
+            cursor.moveToFirst();
+            if (cursor.isFirst()) {
+                do {
+                    String arrayListString = cursor.getString(2);
+                    // Remove the brackets and split the string into an array of values
+                    String withoutBrackets = arrayListString.substring(1, arrayListString.length() - 1);
+                    String[] values = withoutBrackets.split(",\\s*");
 
-        RequestDataSearch requestDataSearch = retrofit.create(RequestDataSearch.class);
-        requestDataSearch.getData("1","2000","ranking").enqueue(new Callback<AnimeResponse>() {
-            @Override
-            public void onResponse(Call<AnimeResponse> call, Response<AnimeResponse> response) {
-                if (response.isSuccessful())
-                {
-                    searchViewAnime = response.body().getData();
-                    adapter = new animeListViewAdapter(SearchViewActivity.this,searchViewAnime);
-                    animListViewSearchActivity.setDivider(new ColorDrawable(Color.TRANSPARENT));
-                    animListViewSearchActivity.setAdapter(adapter);
+// Create an ArrayList and add the values to it
+                    ArrayList<String> arrayList = new ArrayList<>();
+                    for (String value : values) {
+                        arrayList.add(value);
+                    }
 
-                    progressBarSearchView.setVisibility(View.GONE);
-                }else
-                {
-                    Toast.makeText(SearchViewActivity.this, response.errorBody().toString(), Toast.LENGTH_SHORT).show();
+
+                    Anime anime = new Anime(
+                            cursor.getInt(0),
+                            cursor.getString(1),
+                            arrayList,
+                            cursor.getInt(4),
+                            cursor.getString(5),
+                            cursor.getString(3));
+
+                    searchViewAnime.add(anime);
+                } while (cursor.moveToNext());
+
+
+
+            }
+
+            if (!searchViewAnime.isEmpty()) {
+                adapter = new animeListViewAdapter(SearchViewActivity.this, searchViewAnime,this);
+                animListViewSearchActivity.setDivider(new ColorDrawable(Color.TRANSPARENT));
+                animListViewSearchActivity.setAdapter(adapter);
+            }
+            animeSearchView.setVisibility(View.VISIBLE);
+            progressBarSearchView.setVisibility(View.GONE);
+
+        }else
+        {
+            String baseUrl = "https://anime-db.p.rapidapi.com/";
+            retrofit = new Retrofit.Builder()
+                    .baseUrl(baseUrl)
+
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .build();
+
+            RequestDataSearch requestDataSearch = retrofit.create(RequestDataSearch.class);
+            requestDataSearch.getData("1","2000","ranking").enqueue(new Callback<AnimeResponse>() {
+                @Override
+                public void onResponse(Call<AnimeResponse> call, Response<AnimeResponse> response) {
+                    if (response.isSuccessful())
+                    {
+                        searchViewAnime = response.body().getData();
+                        for (int i=0; i<searchViewAnime.size(); i++)
+                        {
+                            databaseHelper.addSearchAnime(String.valueOf(searchViewAnime.get(i).get_id()),
+                                    searchViewAnime.get(i).getTitle(),
+                                    searchViewAnime.get(i).getGenres().toString(),
+                                    String.valueOf(searchViewAnime.get(i).getEpisodes()),
+                                    searchViewAnime.get(i).getSynopsis(),
+                                    searchViewAnime.get(i).getImage());
+                        }
+                        adapter = new animeListViewAdapter(SearchViewActivity.this,searchViewAnime,SearchViewActivity.this);
+                        animListViewSearchActivity.setDivider(new ColorDrawable(Color.TRANSPARENT));
+                        animListViewSearchActivity.setAdapter(adapter);
+                        animeSearchView.setVisibility(View.VISIBLE);
+                        progressBarSearchView.setVisibility(View.GONE);
+                    }else
+                    {
+                        Toast.makeText(SearchViewActivity.this, response.errorBody().toString(), Toast.LENGTH_SHORT).show();
+                    }
                 }
-            }
 
-            @Override
-            public void onFailure(Call<AnimeResponse> call, Throwable t) {
-                Toast.makeText(SearchViewActivity.this, t.toString(), Toast.LENGTH_LONG).show();
+                @Override
+                public void onFailure(Call<AnimeResponse> call, Throwable t) {
+                    Toast.makeText(SearchViewActivity.this, t.toString(), Toast.LENGTH_LONG).show();
 
-            }
-        });
+                }
+            });
+        }
+
 
     }
 
@@ -170,7 +230,7 @@ public class SearchViewActivity extends AppCompatActivity {
             GlobalFormats.reloadActivity(SearchViewActivity.this);
         }else
         {
-            adapter = new animeListViewAdapter(SearchViewActivity.this,filteredList);
+            adapter = new animeListViewAdapter(SearchViewActivity.this,filteredList,this);
             animListViewSearchActivity.setDivider(new ColorDrawable(Color.TRANSPARENT));
             animListViewSearchActivity.setAdapter(adapter);
         }

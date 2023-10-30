@@ -12,7 +12,6 @@
         android:layout_height="?actionBarSize"
         android:orientation="horizontal"
         android:paddingStart="15dp"
-        android:background="@color/shonen_blue"
         android:paddingEnd="15dp">
 
 
@@ -54,14 +53,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <ProgressBar
-android:id="@+id/progressBarMain"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/animeSearchView"
-android:layout_gravity="center_horizontal|center_vertical"
-        android:visibility="gone"
-        />
+<!--    <ProgressBar-->
+<!--android:id="@+id/progressBarMain"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_below="@id/animeSearchView"-->
+<!--android:layout_gravity="center_horizontal|center_vertical"-->
+<!--        android:visibility="gone"-->
+<!--        />-->
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
 

@@ -7,6 +7,45 @@
     android:orientation="vertical"
     tools:context=".SearchViewActivity">
 
+    <LinearLayout
+        android:id="@+id/linToolBar"
+        android:layout_width="match_parent"
+        android:layout_height="?actionBarSize"
+        android:orientation="horizontal"
+        android:paddingStart="15dp"
+        android:paddingEnd="15dp">
+
+
+        <ImageView
+            android:id="@+id/backButtonbtn"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            app:srcCompat="@drawable/backbutton"
+            android:layout_gravity="end|center"
+            app:tint="@color/white"/>
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Anime Counter"
+            android:textSize="20sp"
+            android:fontFamily="@font/manga_temple_regular"
+            android:textColor="@color/white"
+            android:layout_gravity="center|center_vertical"/>
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+
+
+    </LinearLayout>
     <androidx.appcompat.widget.SearchView
         android:id="@+id/animeSearchView"
         android:layout_width="match_parent"

@@ -16,6 +16,7 @@ import android.view.animation.GridLayoutAnimationController;
 import android.view.animation.LayoutAnimationController;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
@@ -34,6 +35,7 @@ import retrofit2.http.Query;
 
 public class SearchViewActivity extends AppCompatActivity {
     SearchView animeSearchView;
+    ImageView backBtn;
     DatabaseHelper databaseHelper;
     public static Retrofit retrofit;
     public ArrayList<Anime> searchViewAnime;
@@ -88,7 +90,13 @@ public class SearchViewActivity extends AppCompatActivity {
             }
         });
 
-
+        backBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(SearchViewActivity.this,MainActivity.class);
+                startActivity(i);
+            }
+        });
 
     }
 
@@ -116,6 +124,7 @@ public class SearchViewActivity extends AppCompatActivity {
     progressBarSearchView = findViewById(R.id.progressBarSearchView);
     animeSearchView = findViewById(R.id.animeSearchView);
     animListViewSearchActivity = findViewById(R.id.animListViewSearchActivity);
+    backBtn = findViewById(R.id.backButtonbtn);
 }
 
     public void setAnimeSearchView()

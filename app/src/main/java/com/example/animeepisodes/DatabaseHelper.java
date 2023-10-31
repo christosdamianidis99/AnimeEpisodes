@@ -23,7 +23,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String COLUMN_TOTALEPISODES = "anime_total_episode";
     public static final String COLUMN_IMAGE = "anime_image";
     public static final String COLUMN_EPISODE = "anime_episode";
-    public static final String COLUMN_SEASON = "anime_season";
 
     public static final String TABLE_NAME_SEARCH = "search_anime_episodes_db";
 
@@ -50,7 +49,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 COLUMN_TOTALEPISODES+" TEXT," +
                 COLUMN_CONTENT+" TEXT," +
                 COLUMN_IMAGE+" TEXT," +
-                COLUMN_SEASON + " INTEGER, " +
                 COLUMN_EPISODE + " INTEGER);";
 
         String query_search = "CREATE TABLE " + TABLE_NAME_SEARCH +
@@ -92,7 +90,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cv.put(COLUMN_GENRES, genre);
         cv.put(COLUMN_TOTALEPISODES, totalepisodes);
         cv.put(COLUMN_CONTENT, content);
-        cv.put(COLUMN_SEASON, season);
         cv.put(COLUMN_EPISODE, episode);
         cv.put(COLUMN_IMAGE, image);
 
@@ -149,7 +146,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         ContentValues cv = new ContentValues();
 
         cv.put(COLUMN_TITLE, title);
-        cv.put(COLUMN_SEASON, season);
         cv.put(COLUMN_EPISODE, episode);
 
 
@@ -160,20 +156,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
-
-    void updateSeason(String row_id, int season)
-    {
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues cv = new ContentValues();
-
-        cv.put(COLUMN_SEASON, season);
-
-        long result = db.update(TABLE_NAME, cv, "_id=?", new String[]{row_id});
-
-        if (result == -1) {
-            Toast.makeText(context, "Failed to Update", Toast.LENGTH_SHORT).show();
-        }
-    }
 
     void updateEpisode(String row_id,int episode)
     {

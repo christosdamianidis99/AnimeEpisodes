@@ -119,6 +119,7 @@ public class animeListViewAdapter extends ArrayAdapter<Anime> {
                 TextView genreTV = convertView.findViewById(R.id.genreTV);
                 TextView contentTV = convertView.findViewById(R.id.contentTV);
                 TextView totalEpisodesTV= convertView.findViewById(R.id.animeTotalEpisodes);
+                TextView episodecounter = convertView.findViewById(R.id.episodeCounter);
                 LinearLayout linLayEpSeason = convertView.findViewById(R.id.linLaySeasonEpisode);
 
 
@@ -183,6 +184,7 @@ public class animeListViewAdapter extends ArrayAdapter<Anime> {
                     genreTV.setText(myAnime.getGenres().toString());
                 }                contentTV.setText(myAnime.getSynopsis());
                 totalEpisodesTV.setText(String.valueOf(myAnime.getEpisodes()));
+                episodecounter.setText(myAnime.getEpisodeCount());
                 linLayEpSeason.setVisibility(View.VISIBLE);
                 deleteAnimeFromDB(deleteAnime);
                 plusMinusClickListeners(convertView,myAnime);
@@ -195,40 +197,11 @@ public class animeListViewAdapter extends ArrayAdapter<Anime> {
     void plusMinusClickListeners(View convertView,Anime anime)
     {
 
-        ImageButton plusSeason = convertView.findViewById(R.id.plusSeason);
-        ImageButton minusSeason = convertView.findViewById(R.id.minusSeason);
         ImageButton plusEpisode = convertView.findViewById(R.id.plusEpisode);
         ImageButton minusEpisode = convertView.findViewById(R.id.minusEpisode);
-        TextView seasonCounter = convertView.findViewById(R.id.seasonCounter);
         TextView episodeCounter = convertView.findViewById(R.id.episodeCounter);
 
-        plusSeason.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-//                iSeason++;
-                anime.incrementSeason();
-                String counter = String.valueOf(anime.getSeasonCount());
-                seasonCounter.setText(counter);
-                myDB.updateSeason(String.valueOf(anime.get_id()),anime.getSeasonCount());
-            }
-        });
 
-        minusSeason.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-//                iSeason--;
-                anime.decrementSeason();
-
-                if (anime.getSeasonCount()<0)
-                {
-                    anime.setSeasonCount(0);
-                }
-                String counter = String.valueOf(anime.getSeasonCount());
-                seasonCounter.setText(counter);
-                myDB.updateSeason(String.valueOf(anime.get_id()),anime.getSeasonCount());
-
-            }
-        });
         plusEpisode.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -236,7 +209,7 @@ public class animeListViewAdapter extends ArrayAdapter<Anime> {
                 anime.incrementEpisode();
                 String counter = String.valueOf(anime.getEpisodeCount());
                 episodeCounter.setText(counter);
-                myDB.updateEpisode(String.valueOf(anime.get_id()),anime.getEpisodeCount());
+                myDB.updateEpisode(String.valueOf(anime.get_id()),Integer.parseInt(anime.getEpisodeCount()));
             }
         });
         minusEpisode.setOnClickListener(new View.OnClickListener() {
@@ -244,13 +217,13 @@ public class animeListViewAdapter extends ArrayAdapter<Anime> {
             public void onClick(View v) {
 //                iEpisode--;
                 anime.decrementEpisode();
-                if (anime.getEpisodeCount()<0)
+                if (Integer.parseInt(anime.getEpisodeCount())<0)
                 {
-                   anime.setEpisodeCount(0);
+                   anime.setEpisodeCount("0");
                 }
                 String counter = String.valueOf(anime.getEpisodeCount());
                 episodeCounter.setText(counter);
-                myDB.updateEpisode(String.valueOf(anime.get_id()),anime.getEpisodeCount());
+                myDB.updateEpisode(String.valueOf(anime.get_id()),Integer.parseInt(anime.getEpisodeCount()));
             }
         });
 

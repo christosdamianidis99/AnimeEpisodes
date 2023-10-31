@@ -58,23 +58,12 @@ public class MainActivity extends AppCompatActivity {
         databaseHelper = new DatabaseHelper(getApplicationContext());
         MODE = 1;
         initWidget();
-//    setOkHttpClient();
         setRetrofit();
         searchMenuBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-//                ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-//                NetworkCapabilities networkCapabilities = connectivityManager.getNetworkCapabilities(connectivityManager.getActiveNetwork());
-//
-//                if (networkCapabilities != null && networkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)) {
-//                    // There is an internet connection, so start the activity
-//                    Intent i = new Intent(MainActivity.this, SearchViewActivity.class);
-//                    startActivity(i);
-//                } else {
-//                    // No internet connection, show a Toast message
-//                    Toast.makeText(MainActivity.this, "No internet connection", Toast.LENGTH_SHORT).show();
-//                }
+
 
                 Intent i = new Intent(MainActivity.this, SearchViewActivity.class);
                 startActivity(i);
@@ -124,8 +113,7 @@ public class MainActivity extends AppCompatActivity {
                             cursor.getInt(3),
                             cursor.getString(5),
                             cursor.getString(4),
-                            cursor.getInt(6),
-                            cursor.getInt(7));
+                            cursor.getString(6));
 
                     myAnime.add(anime);
                 } while (cursor.moveToNext());

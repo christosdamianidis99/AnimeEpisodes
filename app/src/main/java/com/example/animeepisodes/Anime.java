@@ -34,8 +34,7 @@ private String thumb;
     @SerializedName("type")
 private String type;
 
-    private int seasonCount=0;
-    private int episodeCount=0;
+    private String episodeCount;
 
     public Anime() {
     }
@@ -50,18 +49,17 @@ private String type;
         this.ranking = ranking;
     }
 
-    public Anime(int _id, String title, ArrayList<String> genres, int episodes, String image, String synopsis, int seasonCount, int episodeCount) {
+    public Anime(int _id, String title, ArrayList<String> genres, int episodes, String image, String synopsis, String episodeCount) {
         this._id = _id;
         this.title = title;
         this.genres = genres;
         this.episodes = episodes;
         this.image = image;
         this.synopsis = synopsis;
-        this.seasonCount = seasonCount;
         this.episodeCount = episodeCount;
     }
 
-    public Anime(int _id, String title, ArrayList<String> alternativeTitles, int ranking, ArrayList<String> genres, int episodes, boolean hasEpisode, boolean hasRanking, String image, String link, String status, String synopsis, String thumb, String type, int seasonCount, int episodeCount) {
+    public Anime(int _id, String title, ArrayList<String> alternativeTitles, int ranking, ArrayList<String> genres, int episodes, boolean hasEpisode, boolean hasRanking, String image, String link, String status, String synopsis, String thumb, String type, String episodeCount) {
         this._id = _id;
         this.title = title;
         this.alternativeTitles = alternativeTitles;
@@ -76,7 +74,6 @@ private String type;
         this.synopsis = synopsis;
         this.thumb = thumb;
         this.type = type;
-        this.seasonCount = seasonCount;
         this.episodeCount = episodeCount;
     }
 
@@ -192,36 +189,37 @@ private String type;
         this.type = type;
     }
 
-    public int getSeasonCount() {
-        return seasonCount;
-    }
 
-    public void setSeasonCount(int seasonCount) {
-        this.seasonCount = seasonCount;
-    }
 
-    public int getEpisodeCount() {
+    public String getEpisodeCount() {
+        if (episodeCount==null)
+        {
+            episodeCount="0";
+        }
         return episodeCount;
     }
 
-    public void setEpisodeCount(int episodeCount) {
+    public void setEpisodeCount(String episodeCount) {
         this.episodeCount = episodeCount;
     }
-    public void incrementSeason() {
-        seasonCount++;
-    }
 
-    public void decrementSeason() {
-        seasonCount--;
-    }
 
     public void incrementEpisode() {
-        episodeCount++;
+        if (!(episodeCount==null))
+        {
+            int myCount = Integer.parseInt(episodeCount);
+            myCount++;
+            episodeCount=String.valueOf(myCount);
+        }
     }
 
     public void decrementEpisode() {
-        episodeCount--;
-    }
+        if (!(episodeCount==null))
+        {
+            int myCount = Integer.parseInt(episodeCount);
+            myCount--;
+            episodeCount=String.valueOf(myCount);
+        }    }
     @Override
     public String toString() {
         return "Anime{" +
@@ -239,7 +237,6 @@ private String type;
                 ", synopsis='" + synopsis + '\'' +
                 ", thumb='" + thumb + '\'' +
                 ", type='" + type + '\'' +
-                ", seasonCount=" + seasonCount +
                 ", episodeCount=" + episodeCount +
                 '}';
     }

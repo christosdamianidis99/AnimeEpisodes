@@ -40,13 +40,14 @@ private String type;
     public Anime() {
     }
 
-    public Anime(int _id, String title, ArrayList<String> alternativeTitles, int episodes, String image, String synopsis) {
+    public Anime(int _id, String title, ArrayList<String> alternativeTitles, int episodes, String image, String synopsis,int ranking) {
         this._id = _id;
         this.title = title;
         this.alternativeTitles = alternativeTitles;
         this.episodes = episodes;
         this.image = image;
         this.synopsis = synopsis;
+        this.ranking = ranking;
     }
 
     public Anime(int _id, String title, ArrayList<String> genres, int episodes, String image, String synopsis, int seasonCount, int episodeCount) {

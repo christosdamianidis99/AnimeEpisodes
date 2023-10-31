@@ -55,8 +55,6 @@ public class animeListViewAdapter extends ArrayAdapter<Anime> {
         }
 
 
-//        seasonCounter.setText(anime.getSeasonCount());
-//        episodeCounter.setText(anime.getEpisodeCount());
             if (MainActivity.MODE==2)
             {
                 ImageView animeImage = convertView.findViewById(R.id.animeImage);
@@ -73,6 +71,7 @@ public class animeListViewAdapter extends ArrayAdapter<Anime> {
                 String animeUrlImage = myAnime.getImage();
 
                 if (myAnime != null) {
+
                     // Define the filename for the image associated with this anime
                     final String filename = "anime_" + myAnime.get_id() + ".png";
 
@@ -80,6 +79,7 @@ public class animeListViewAdapter extends ArrayAdapter<Anime> {
                     File imageFile = new File(context.getFilesDir(), filename);
 
                     if (imageFile.exists()) {
+                        animeImage.setVisibility(View.VISIBLE);
                         // Image exists in internal storage; load it
                         Picasso.get().load(imageFile).into(animeImage);
                     } else {
@@ -173,15 +173,15 @@ public class animeListViewAdapter extends ArrayAdapter<Anime> {
 
 
 
-//                Anime myAnime = getItem(position);
-//                if (myAnime != null) {
-//                    String animeUrlImage = myAnime.getImage();
-//                    Picasso.get().load(animeUrlImage).into(animeImage);
-//                }
 //
                 titleTV.setText(myAnime.getTitle());
-                genreTV.setText(myAnime.getGenres().toString());
-                contentTV.setText(myAnime.getSynopsis());
+                if (myAnime.getGenres()==null)
+                {
+                    genreTV.setVisibility(View.GONE);
+                }else {
+                    genreTV.setVisibility(View.VISIBLE);
+                    genreTV.setText(myAnime.getGenres().toString());
+                }                contentTV.setText(myAnime.getSynopsis());
                 totalEpisodesTV.setText(String.valueOf(myAnime.getEpisodes()));
                 linLayEpSeason.setVisibility(View.VISIBLE);
                 deleteAnimeFromDB(deleteAnime);

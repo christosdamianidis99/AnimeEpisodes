@@ -10,9 +10,9 @@
     <androidx.appcompat.widget.SearchView
         android:id="@+id/animeSearchView"
         android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:background="@color/white"
-        app:queryBackground="@color/white"
-        android:layout_height="40dp"/>
+        app:iconifiedByDefault="false" />
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -33,8 +33,7 @@
                 android:id="@+id/animListViewSearchActivity"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_below="@id/linToolBar"
-                android:layout_marginTop="10dp"/>
+                android:layout_below="@id/linToolBar"/>
         </LinearLayout>
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 

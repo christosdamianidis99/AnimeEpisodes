@@ -98,14 +98,22 @@ public class MainActivity extends AppCompatActivity {
             if (cursor.isFirst()) {
                 do {
                     String arrayListString = cursor.getString(2);
+                    ArrayList<String> arrayList = new ArrayList<>();
                     // Remove the brackets and split the string into an array of values
-                    String withoutBrackets = arrayListString.substring(1, arrayListString.length() - 1);
-                    String[] values = withoutBrackets.split(",\\s*");
+                    if (arrayListString==null)
+                    {
+                        arrayList=null;
+                    }else
+                    {
+                        String withoutBrackets = arrayListString.substring(1, arrayListString.length() - 1);
+                        String[] values = withoutBrackets.split(",\\s*");
 
 // Create an ArrayList and add the values to it
-                    ArrayList<String> arrayList = new ArrayList<>();
-                    for (String value : values) {
-                        arrayList.add(value);
+
+                        for (String value : values) {
+                            arrayList.add(value);
+                        }
+
                     }
 
 

@@ -10,6 +10,10 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.view.animation.GridLayoutAnimationController;
+import android.view.animation.LayoutAnimationController;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -17,6 +21,7 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -92,7 +97,14 @@ public class SearchViewActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
             Anime anim = (Anime) adapterView.getAdapter().getItem(i);
-            databaseHelper.addAnime(String.valueOf(anim.get_id()),anim.getTitle(),anim.getGenres().toString(),String.valueOf(anim.getEpisodes()),anim.getSynopsis(),"0","0",anim.getImage());
+            String genre;
+            if (anim.getGenres()==null)
+            {
+                genre = null;
+            }else {
+                genre = anim.getGenres().toString();
+            }
+            databaseHelper.addAnime(String.valueOf(anim.get_id()),anim.getTitle(),genre,String.valueOf(anim.getEpisodes()),anim.getSynopsis(),"0","0",anim.getImage());
                 Intent i1 = new Intent(SearchViewActivity.this,MainActivity.class);
                 startActivity(i1);
             }
@@ -134,7 +146,8 @@ public class SearchViewActivity extends AppCompatActivity {
                             arrayList,
                             cursor.getInt(4),
                             cursor.getString(5),
-                            cursor.getString(3));
+                            cursor.getString(3),
+                            Integer.parseInt(cursor.getString(6)));
 
                     searchViewAnime.add(anime);
                 } while (cursor.moveToNext());
@@ -143,10 +156,24 @@ public class SearchViewActivity extends AppCompatActivity {
 
             }
 
+
             if (!searchViewAnime.isEmpty()) {
+                searchViewAnime.sort(new Comparator<Anime>() {
+                    @Override
+                    public int compare(Anime o1, Anime o2) {
+                        return Integer.compare(o1.getRanking(), o2.getRanking());
+                    }
+                });
                 adapter = new animeListViewAdapter(SearchViewActivity.this, searchViewAnime,this);
                 animListViewSearchActivity.setDivider(new ColorDrawable(Color.TRANSPARENT));
                 animListViewSearchActivity.setAdapter(adapter);
+
+                Animation cardAnimation = AnimationUtils.loadAnimation(SearchViewActivity.this, R.anim.cardanimation);
+                LayoutAnimationController controller = new LayoutAnimationController(cardAnimation);
+                controller.setDelay(0.2f);
+                animListViewSearchActivity.setLayoutAnimation(controller);
+                animListViewSearchActivity.scheduleLayoutAnimation();
+
             }
             animeSearchView.setVisibility(View.VISIBLE);
             progressBarSearchView.setVisibility(View.GONE);
@@ -167,6 +194,13 @@ public class SearchViewActivity extends AppCompatActivity {
                     if (response.isSuccessful())
                     {
                         searchViewAnime = response.body().getData();
+                        searchViewAnime.sort(new Comparator<Anime>() {
+                            @Override
+                            public int compare(Anime o1, Anime o2) {
+                                return Integer.compare(o1.getRanking(), o2.getRanking());
+                            }
+                        });
+
                         for (int i=0; i<searchViewAnime.size(); i++)
                         {
                             databaseHelper.addSearchAnime(String.valueOf(searchViewAnime.get(i).get_id()),
@@ -174,11 +208,24 @@ public class SearchViewActivity extends AppCompatActivity {
                                     searchViewAnime.get(i).getGenres().toString(),
                                     String.valueOf(searchViewAnime.get(i).getEpisodes()),
                                     searchViewAnime.get(i).getSynopsis(),
-                                    searchViewAnime.get(i).getImage());
+                                    searchViewAnime.get(i).getImage(),
+                                    String.valueOf(searchViewAnime.get(i).getRanking()));
                         }
+
+
+
                         adapter = new animeListViewAdapter(SearchViewActivity.this,searchViewAnime,SearchViewActivity.this);
                         animListViewSearchActivity.setDivider(new ColorDrawable(Color.TRANSPARENT));
                         animListViewSearchActivity.setAdapter(adapter);
+
+
+                        Animation cardAnimation = AnimationUtils.loadAnimation(SearchViewActivity.this, R.anim.cardanimation);
+                        LayoutAnimationController controller = new LayoutAnimationController(cardAnimation);
+                        controller.setDelay(0.2f);
+                        animListViewSearchActivity.setLayoutAnimation(controller);
+                        animListViewSearchActivity.scheduleLayoutAnimation();
+
+
                         animeSearchView.setVisibility(View.VISIBLE);
                         progressBarSearchView.setVisibility(View.GONE);
                     }else

@@ -8,16 +8,21 @@
     android:layout_marginBottom="15dp"
     >
 
-
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/cardviewgradient"
+        >
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:backgroundTint="#FD9C00"
+        android:layout_margin="16dp"
+        app:cardCornerRadius="8dp"
         app:cardElevation="4dp"
-        app:cardCornerRadius="4dp"
+        app:contentPadding="8dp"
+        app:cardBackgroundColor="@android:color/transparent"
         app:cardPreventCornerOverlap="false"
         app:cardUseCompatPadding="true"
-        android:layout_margin="8dp"
         >
 
         <LinearLayout
@@ -33,7 +38,9 @@
 
                 <ImageView
                     android:id="@+id/animeImage"
-                    style="@style/MatchParentImage"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop"
                     android:src="@mipmap/placeholder"
                     android:contentDescription="Image Description"
                     />
@@ -78,7 +85,7 @@
                             android:layout_height="30dp"
                             android:layout_weight="1"
                             android:src="@drawable/cancel_img"
-                            android:backgroundTint="#FD9C00"
+                            android:background="@android:color/transparent"
                             android:layout_width="0dp"/>
                     </LinearLayout>
 
@@ -88,6 +95,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="10dp"
+                            android:textSize="8sp"
                             android:gravity="center_horizontal"
                             android:fontFamily="@font/manga_temple_regular"
 
@@ -96,13 +104,13 @@
                         <TextView
                             android:id="@+id/contentTV"
                             android:layout_width="match_parent"
-                            android:layout_height="100dp"
+                            android:layout_height="80dp"
                             android:layout_marginTop="10dp"
                             android:maxLines="4"
+                            android:textSize="10sp"
                             android:ellipsize="end"
                             android:gravity="center_horizontal"
                             android:fontFamily="@font/manga_temple_regular"
-
                             android:text="Content" />
                     </LinearLayout>
                     <LinearLayout
@@ -174,7 +182,7 @@
                                 android:id="@+id/plusSeason"
                                 android:layout_width="20dp"
                                 android:layout_height="20dp"
-                                android:background="#FD9C00"
+                                android:background="@android:color/transparent"
                                 android:src="@drawable/add_icon"
                                 android:layout_gravity="start" />
 
@@ -192,7 +200,7 @@
                                 android:id="@+id/minusSeason"
                                 android:layout_width="20dp"
                                 android:layout_height="20dp"
-                                android:background="#FD9C00"
+                                android:background="@android:color/transparent"
                                 android:src="@drawable/minus_icon"
                                 android:layout_gravity="right" />
 
@@ -216,7 +224,7 @@
                                 android:id="@+id/plusEpisode"
                                 android:layout_width="20dp"
                                 android:layout_height="20dp"
-                                android:background="#FD9C00"
+                                android:background="@android:color/transparent"
                                 android:src="@drawable/add_icon"
                                 android:layout_gravity="start" />
 
@@ -232,10 +240,9 @@
                                 android:id="@+id/minusEpisode"
                                 android:layout_width="20dp"
                                 android:layout_height="20dp"
-                                android:background="#FD9C00"
+                                android:background="@android:color/transparent"
                                 android:src="@drawable/minus_icon"
                                 android:fontFamily="@font/manga_temple_regular"
-
                                 android:layout_gravity="right" />
                             <TextView
                                 android:id="@+id/episodeCounter"
@@ -259,4 +266,5 @@
 
         </LinearLayout>
 </androidx.cardview.widget.CardView>
+    </RelativeLayout>
 </LinearLayout>

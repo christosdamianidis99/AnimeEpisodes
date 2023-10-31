@@ -33,6 +33,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String COLUMN_CONTENT_SEARCH = "anime_content";
     public static final String COLUMN_TOTALEPISODES_SEARCH = "anime_total_episode";
     public static final String COLUMN_IMAGE_SEARCH = "anime_image";
+    public static final String COLUMN_RANK_SEARCH = "anime_rank";
 
     public DatabaseHelper(@Nullable Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -58,7 +59,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 COLUMN_GENRES_SEARCH + " TEXT," +
                 COLUMN_CONTENT_SEARCH+" TEXT," +
                 COLUMN_TOTALEPISODES_SEARCH+" TEXT," +
-                COLUMN_IMAGE_SEARCH+" TEXT);";
+                COLUMN_IMAGE_SEARCH + " TEXT," +
+                COLUMN_RANK_SEARCH + " TEXT);";
 
         db.execSQL(query);
         db.execSQL(query_search);
@@ -94,13 +96,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cv.put(COLUMN_EPISODE, episode);
         cv.put(COLUMN_IMAGE, image);
 
+
         long result = db.insert(TABLE_NAME, null, cv);
         if (result == -1) {
             Toast.makeText(context, "Data Failed", Toast.LENGTH_SHORT).show();
         }
     }
 
-    void addSearchAnime(String id,String title,String genre,String totalepisodes,String content,String image)
+    void addSearchAnime(String id,String title,String genre,String totalepisodes,String content,String image,String rank)
     {  SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
 
@@ -111,7 +114,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cv.put(COLUMN_CONTENT_SEARCH, content);
         cv.put(COLUMN_TOTALEPISODES_SEARCH, totalepisodes);
         cv.put(COLUMN_IMAGE_SEARCH, image);
-
+        cv.put(COLUMN_RANK_SEARCH,rank);
         long result = db.insert(TABLE_NAME_SEARCH, null, cv);
         if (result == -1) {
             Toast.makeText(context, "Data Failed", Toast.LENGTH_SHORT).show();

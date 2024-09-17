@@ -3,7 +3,7 @@
     <style name="Base.Theme.AnimeEpisodes" parent="Theme.Material3.DayNight.NoActionBar">
         <item name="colorPrimary">@color/otaku_orange</item>
         <item name="colorPrimaryDark">@color/ninja_black</item> <!-- For the status bar color -->
-        <item name="android:windowBackground">@drawable/mygradient</item>
+        <item name="android:windowBackground">@drawable/anime_gradient_background</item>
 
     </style>
 

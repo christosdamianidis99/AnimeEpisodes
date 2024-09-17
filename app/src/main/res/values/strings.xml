@@ -1,3 +1,6 @@
 <resources>
     <string name="app_name">Anime Episode Counter</string>
+    <string name="delete_anime">Delete Anime</string>
+    <string name="genre">Genre</string>
+    <string name="title">Title</string>
 </resources>

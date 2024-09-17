@@ -1,233 +1,197 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="250dp"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
-    android:layout_marginTop="15dp"
-    android:layout_marginBottom="15dp"
-    >
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="5dp"
+    android:padding="10dp"
+    android:background="@drawable/anime_card_background"
+    android:layout_marginBottom="5dp">
 
-    <RelativeLayout
-        android:layout_width="wrap_content"
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardView"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        >
+        app:cardCornerRadius="12dp"
+        app:cardElevation="8dp"
+        app:contentPadding="4dp"
+        app:cardBackgroundColor="@android:color/transparent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
 
-        <androidx.cardview.widget.CardView
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginBottom="16dp"
-            app:cardBackgroundColor="@android:color/transparent"
-            app:cardCornerRadius="8dp"
-            app:cardElevation="2dp"
-            app:contentPadding="7dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="horizontal">
+            android:layout_height="wrap_content">
 
             <androidx.cardview.widget.CardView
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
+                android:id="@+id/animeImageCard"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:foreground="?android:attr/selectableItemBackground"
                 app:cardCornerRadius="12dp"
-            app:cardElevation="2dp"
-            app:cardUseCompatPadding="true"
-            app:contentPadding="0dp"
-            android:foreground="?android:attr/selectableItemBackground"
-            android:layout_margin="0dp">
+                app:cardElevation="2dp"
+                app:cardUseCompatPadding="true"
+                app:contentPadding="0dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
 
-            <ImageView
-                android:id="@+id/animeImage"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:contentDescription="Image Description"
-                android:scaleType="centerCrop"
-                android:src="@mipmap/placeholder" />
-
-        </androidx.cardview.widget.CardView>
-
-
-    <LinearLayout
+                <ImageView
+                    android:id="@+id/animeImage"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:orientation="vertical">
+                    android:contentDescription="Image Description"
+                    android:scaleType="centerCrop"
+                    android:src="@mipmap/placeholder"  />
 
-                    <androidx.coordinatorlayout.widget.CoordinatorLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent">
+            </androidx.cardview.widget.CardView>
 
+            <LinearLayout
+                android:id="@+id/allContentLayout"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="8dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/animeImageCard"
+                app:layout_constraintTop_toTopOf="parent">
 
-                        <LinearLayout
-                            android:id="@+id/allContentLayout"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="vertical">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingBottom="4dp">
 
-                            <LinearLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:orientation="horizontal">
+                    <TextView
+                        android:id="@+id/titleTV"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:fontFamily="@font/manga_temple_regular"
+                        android:gravity="center_horizontal|center_vertical"
+                        android:text="@string/title"
+                        android:textColor="@color/white"
+                        android:textStyle="bold" />
 
-
-                                <TextView
-                                    android:id="@+id/titleTV"
-                                    android:layout_width="0dp"
-                                    android:layout_height="wrap_content"
-                                    android:layout_marginTop="5dp"
-                                    android:layout_weight="10"
-                                    android:fontFamily="@font/manga_temple_regular"
-                                    android:gravity="center_horizontal"
-                                    android:text="Tittle"
-                                    android:textColor="@color/white"
-                                    android:textStyle="bold" />
-
-                                <ImageButton
-                                    android:id="@+id/deleteAnime"
-                                    android:layout_width="0dp"
-                                    android:layout_height="30dp"
-                                    android:layout_weight="1"
-                                    android:background="@android:color/transparent"
-                                    android:src="@drawable/cancel_img" />
-                            </LinearLayout>
-
-
-                            <TextView
-                                android:id="@+id/genreTV"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="10dp"
-                                android:fontFamily="@font/manga_temple_regular"
-                                android:gravity="center_horizontal"
-                                android:text="Genre"
-                                android:textColor="@color/white"
-
-                                android:textSize="8sp" />
-
-                            <TextView
-                                android:id="@+id/contentTV"
-                                android:layout_width="match_parent"
-                                android:layout_height="80dp"
-                                android:layout_marginTop="10dp"
-                                android:ellipsize="end"
-                                android:fontFamily="@font/manga_temple_regular"
-                                android:gravity="center_horizontal"
-                                android:maxLines="4"
-                                android:text="Content"
-                                android:textColor="@color/white"
-                                android:textSize="10sp" />
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:id="@+id/linLayTotals"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="bottom"
-                            android:layout_marginTop="10dp"
-                            android:layout_marginBottom="40dp"
-                            android:orientation="horizontal">
-
-
-                            <LinearLayout
-                                android:layout_width="wrap_content"
-                                android:layout_height="match_parent"
-                                android:orientation="horizontal">
-
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="match_parent"
-                                    android:layout_marginLeft="5dp"
-                                    android:layout_marginRight="5dp"
-                                    android:fontFamily="@font/manga_temple_regular"
-                                    android:gravity="center_vertical"
-                                    android:text="total episodes"
-
-                                    android:textColor="@color/white" />
-
-                                <TextView
-                                    android:id="@+id/animeTotalEpisodes"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="match_parent"
-                                    android:layout_marginLeft="2dp"
-                                    android:layout_marginRight="5dp"
-                                    android:fontFamily="@font/manga_temple_regular"
-                                    android:gravity="center_vertical"
-                                    android:text="0"
-
-                                    android:textColor="@color/white" />
-                            </LinearLayout>
-
-
-                        </LinearLayout>
-
-
-                        <LinearLayout
-                            android:id="@+id/linLaySeasonEpisode"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="bottom"
-                            android:layout_marginTop="10dp"
-                            android:orientation="horizontal">
-
-
-                            <LinearLayout
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:gravity="center_horizontal"
-                                android:orientation="horizontal">
-
-                                <ImageButton
-                                    android:id="@+id/plusEpisode"
-                                    android:layout_width="20dp"
-                                    android:layout_height="30dp"
-                                    android:layout_gravity="start"
-                                    android:layout_marginRight="5dp"
-                                    android:background="@android:color/transparent"
-                                    android:src="@drawable/add_icon" />
-
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="match_parent"
-                                    android:layout_marginLeft="5dp"
-                                    android:layout_marginRight="5dp"
-                                    android:gravity="center_vertical"
-                                    android:text="Episode"
-                                    android:textColor="@color/white" />
-
-                                <ImageButton
-                                    android:id="@+id/minusEpisode"
-                                    android:layout_width="20dp"
-                                    android:layout_height="30dp"
-                                    android:layout_gravity="right"
-                                    android:layout_marginRight="5dp"
-                                    android:background="@android:color/transparent"
-                                    android:fontFamily="@font/manga_temple_regular"
-                                    android:src="@drawable/minus_icon" />
-
-                                <TextView
-                                    android:id="@+id/episodeCounter"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="match_parent"
-                                    android:layout_marginLeft="5dp"
-                                    android:gravity="center_vertical"
-                                    android:textSize="18sp"
-                                    android:text="0"
-                                    android:textColor="@color/white" />
-
-                            </LinearLayout>
-
-                        </LinearLayout>
-                    </androidx.coordinatorlayout.widget.CoordinatorLayout>
-
-
+                    <ImageButton
+                        android:id="@+id/deleteAnime"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@android:color/transparent"
+                        android:contentDescription="@string/delete_anime"
+                        android:src="@drawable/cancel_img" />
                 </LinearLayout>
 
+                <TextView
+                    android:id="@+id/genreTV"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:fontFamily="@font/manga_temple_regular"
+                    android:gravity="center_horizontal"
+                    android:text="@string/genre"
+                    android:textColor="@color/white"
+                    android:textSize="8sp" />
+
+                <TextView
+                    android:id="@+id/contentTV"
+                    android:layout_width="match_parent"
+                    android:layout_height="80dp"
+                    android:layout_marginTop="4dp"
+                    android:ellipsize="end"
+                    android:fontFamily="@font/manga_temple_regular"
+                    android:gravity="center_horizontal"
+                    android:maxLines="4"
+                    android:text="Content"
+                    android:textColor="@color/white"
+                    android:textSize="10sp" />
+
+
+                <TextView
+                    android:id="@+id/rankingTv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:ellipsize="end"
+                    android:fontFamily="@font/manga_temple_regular"
+                    android:gravity="center_horizontal"
+                    android:text="Ranking"
+                    android:textColor="@color/white"
+                    android:textSize="8sp" />
+
+                <LinearLayout
+                    android:id="@+id/linLayTotals"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="4dp"
+                        android:fontFamily="@font/manga_temple_regular"
+                        android:text="Total Episodes"
+                        android:textColor="@color/white" />
+
+                    <TextView
+                        android:id="@+id/animeTotalEpisodes"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="0"
+                        android:textColor="@color/white" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/linLaySeasonEpisode"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical|center_horizontal">
+
+                    <TextView
+                        android:id="@+id/episodeCounter"
+                        android:layout_width="50dp"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_horizontal"
+                        android:text="0"
+                        android:textColor="@color/white"
+                        android:textSize="18sp" />
+
+                    <EditText
+                        android:id="@+id/episodeCounterEditText"
+                        android:layout_width="50dp"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_horizontal"
+                        android:text="0"
+                        android:textColor="@color/white"
+                        android:textSize="18sp"
+                        android:visibility="gone" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginEnd="5dp"
+                        android:gravity="center_vertical"
+                        android:text="Episode"
+                        android:textColor="@color/white" />
+
+                    <TextView
+                        android:id="@+id/saveCounterButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="end"
+                        android:layout_marginStart="5dp"
+                        android:background="@drawable/ic_check"
+                        android:gravity="center_vertical"
+                        android:textColor="@color/white" />
+                </LinearLayout>
 
             </LinearLayout>
-        </androidx.cardview.widget.CardView>
-    </RelativeLayout>
-</LinearLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.cardview.widget.CardView>
+</androidx.constraintlayout.widget.ConstraintLayout>

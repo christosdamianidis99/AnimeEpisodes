@@ -9,6 +9,8 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
+import java.util.ArrayList;
+
 public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "AnimeEpisodes.db";
     private static final int DATABASE_VERSION = 1;
@@ -139,21 +141,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             cursor = db.rawQuery(query, null);
         }
         return cursor;
-    }
-    void updateAnime(String row_id,String title,int season, int episode)
-    {
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues cv = new ContentValues();
-
-        cv.put(COLUMN_TITLE, title);
-        cv.put(COLUMN_EPISODE, episode);
-
-
-        long result = db.update(TABLE_NAME, cv, "_id=?", new String[]{row_id});
-
-        if (result == -1) {
-            Toast.makeText(context, "Failed to Update", Toast.LENGTH_SHORT).show();
-        }
     }
 
 

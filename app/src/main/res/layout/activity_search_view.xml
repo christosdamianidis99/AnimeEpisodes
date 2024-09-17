@@ -71,8 +71,7 @@
             <ListView
                 android:id="@+id/animListViewSearchActivity"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_below="@id/linToolBar"/>
+                android:layout_height="match_parent" />
         </LinearLayout>
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 

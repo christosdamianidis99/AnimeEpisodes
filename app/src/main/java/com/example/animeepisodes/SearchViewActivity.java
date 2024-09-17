@@ -1,5 +1,7 @@
 package com.example.animeepisodes;
 
+import static com.example.animeepisodes.MainActivity.searchViewAnime;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 
@@ -15,6 +17,7 @@ import android.view.animation.AnimationUtils;
 import android.view.animation.GridLayoutAnimationController;
 import android.view.animation.LayoutAnimationController;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -37,28 +40,33 @@ public class SearchViewActivity extends AppCompatActivity {
     SearchView animeSearchView;
     ImageView backBtn;
     DatabaseHelper databaseHelper;
-    public static Retrofit retrofit;
-    public ArrayList<Anime> searchViewAnime;
     ListView animListViewSearchActivity;
     private static String newTextSearchBar;
     public  animeListViewAdapter adapter;
     ProgressBar progressBarSearchView;
-    interface RequestDataSearch
-    {
-        @Headers("X-RapidAPI-Key: " + "c5462cadcfmshfba151667d49f0bp11efbdjsn83afd80209c5")
-        @GET("anime")
-        Call<AnimeResponse> getData(@Query("page") String myPage, @Query("size") String mySize, @Query("sortBy") String sortBy);
-    }
+
+    private static final int ITEMS_PER_PAGE = 50;
+    private int currentPage = 0;
+    private boolean isLoading = false;
+    private boolean hasMoreData = true; // To prevent multiple loads
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         MainActivity.MODE=2;
         setContentView(R.layout.activity_search_view);
         initWidgets();
+
+        searchViewAnime.sort(new Comparator<Anime>() {
+            @Override
+            public int compare(Anime o1, Anime o2) {
+                return Integer.compare(o1.getRanking(), o2.getRanking());
+            }
+        });
         databaseHelper = new DatabaseHelper(getApplicationContext());
         progressBarSearchView.setVisibility(View.VISIBLE);
         animeSearchView.setVisibility(View.GONE);
-        setAnimeSearchView();
+        setAdapter();
         setSearchViewClickListener();
         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.showSoftInput(animeSearchView, InputMethodManager.SHOW_IMPLICIT);
@@ -77,7 +85,7 @@ public class SearchViewActivity extends AppCompatActivity {
 
                     if (!(adapter==null))
                     {
-                        adapter.clear();
+                     setAdapter();
                     }
 
                 }else
@@ -98,199 +106,101 @@ public class SearchViewActivity extends AppCompatActivity {
             }
         });
 
-    }
 
-    private void setSearchViewClickListener() {
-        animListViewSearchActivity.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        animListViewSearchActivity.setOnScrollListener(new AbsListView.OnScrollListener() {
             @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-            Anime anim = (Anime) adapterView.getAdapter().getItem(i);
-            String genre;
-            if (anim.getGenres()==null)
-            {
-                genre = null;
-            }else {
-                genre = anim.getGenres().toString();
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+                // No action required
             }
-            databaseHelper.addAnime(String.valueOf(anim.get_id()),anim.getTitle(),genre,String.valueOf(anim.getEpisodes()),anim.getSynopsis(),"0","0",anim.getImage());
-                Intent i1 = new Intent(SearchViewActivity.this,MainActivity.class);
-                startActivity(i1);
+
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+                if (totalItemCount == (firstVisibleItem + visibleItemCount) && !isLoading && hasMoreData) {
+                    loadMoreItems();
+                }
             }
         });
     }
 
-    void initWidgets()
-{
-    progressBarSearchView = findViewById(R.id.progressBarSearchView);
-    animeSearchView = findViewById(R.id.animeSearchView);
-    animListViewSearchActivity = findViewById(R.id.animListViewSearchActivity);
-    backBtn = findViewById(R.id.backButtonbtn);
-}
-
-    public void setAnimeSearchView()
-    {
-        searchViewAnime=new ArrayList<>();
-        if (!databaseHelper.isTableEmpty("search_anime_episodes_db"))
-        {
-
-            Cursor cursor = databaseHelper.readAllSearch();
-            cursor.moveToFirst();
-            if (cursor.isFirst()) {
-                do {
-                    String arrayListString = cursor.getString(2);
-                    // Remove the brackets and split the string into an array of values
-                    String withoutBrackets = arrayListString.substring(1, arrayListString.length() - 1);
-                    String[] values = withoutBrackets.split(",\\s*");
-
-// Create an ArrayList and add the values to it
-                    ArrayList<String> arrayList = new ArrayList<>();
-                    for (String value : values) {
-                        arrayList.add(value);
-                    }
-
-
-                    Anime anime = new Anime(
-                            cursor.getInt(0),
-                            cursor.getString(1),
-                            arrayList,
-                            cursor.getInt(4),
-                            cursor.getString(5),
-                            cursor.getString(3),
-                            Integer.parseInt(cursor.getString(6)));
-
-                    searchViewAnime.add(anime);
-                } while (cursor.moveToNext());
-
-
-
-            }
-
-
-            if (!searchViewAnime.isEmpty()) {
-                searchViewAnime.sort(new Comparator<Anime>() {
-                    @Override
-                    public int compare(Anime o1, Anime o2) {
-                        return Integer.compare(o1.getRanking(), o2.getRanking());
-                    }
-                });
-                adapter = new animeListViewAdapter(SearchViewActivity.this, searchViewAnime,this);
-                animListViewSearchActivity.setDivider(new ColorDrawable(Color.TRANSPARENT));
-                animListViewSearchActivity.setAdapter(adapter);
-
-                Animation cardAnimation = AnimationUtils.loadAnimation(SearchViewActivity.this, R.anim.cardanimation);
-                LayoutAnimationController controller = new LayoutAnimationController(cardAnimation);
-                controller.setDelay(0.2f);
-                animListViewSearchActivity.setLayoutAnimation(controller);
-                animListViewSearchActivity.scheduleLayoutAnimation();
-
-            }
-            animeSearchView.setVisibility(View.VISIBLE);
-            progressBarSearchView.setVisibility(View.GONE);
-
-        }else
-        {
-            String baseUrl = "https://anime-db.p.rapidapi.com/";
-            retrofit = new Retrofit.Builder()
-                    .baseUrl(baseUrl)
-
-                    .addConverterFactory(GsonConverterFactory.create())
-                    .build();
-
-            RequestDataSearch requestDataSearch = retrofit.create(RequestDataSearch.class);
-            requestDataSearch.getData("1","2000","ranking").enqueue(new Callback<AnimeResponse>() {
-                @Override
-                public void onResponse(Call<AnimeResponse> call, Response<AnimeResponse> response) {
-                    if (response.isSuccessful())
-                    {
-                        searchViewAnime = response.body().getData();
-                        searchViewAnime.sort(new Comparator<Anime>() {
-                            @Override
-                            public int compare(Anime o1, Anime o2) {
-                                return Integer.compare(o1.getRanking(), o2.getRanking());
-                            }
-                        });
-
-                        for (int i=0; i<searchViewAnime.size(); i++)
-                        {
-                            databaseHelper.addSearchAnime(String.valueOf(searchViewAnime.get(i).get_id()),
-                                    searchViewAnime.get(i).getTitle(),
-                                    searchViewAnime.get(i).getGenres().toString(),
-                                    String.valueOf(searchViewAnime.get(i).getEpisodes()),
-                                    searchViewAnime.get(i).getSynopsis(),
-                                    searchViewAnime.get(i).getImage(),
-                                    String.valueOf(searchViewAnime.get(i).getRanking()));
-                        }
-
-
-
-                        adapter = new animeListViewAdapter(SearchViewActivity.this,searchViewAnime,SearchViewActivity.this);
-                        animListViewSearchActivity.setDivider(new ColorDrawable(Color.TRANSPARENT));
-                        animListViewSearchActivity.setAdapter(adapter);
-
-
-                        Animation cardAnimation = AnimationUtils.loadAnimation(SearchViewActivity.this, R.anim.cardanimation);
-                        LayoutAnimationController controller = new LayoutAnimationController(cardAnimation);
-                        controller.setDelay(0.2f);
-                        animListViewSearchActivity.setLayoutAnimation(controller);
-                        animListViewSearchActivity.scheduleLayoutAnimation();
-
-
-                        animeSearchView.setVisibility(View.VISIBLE);
-                        progressBarSearchView.setVisibility(View.GONE);
-                    }else
-                    {
-                        Toast.makeText(SearchViewActivity.this, response.errorBody().toString(), Toast.LENGTH_SHORT).show();
-                    }
-                }
-
-                @Override
-                public void onFailure(Call<AnimeResponse> call, Throwable t) {
-                    Toast.makeText(SearchViewActivity.this, t.toString(), Toast.LENGTH_LONG).show();
-
-                }
-            });
-        }
-
-
+    private void setSearchViewClickListener() {
+        animListViewSearchActivity.setOnItemClickListener((adapterView, view, i, l) -> {
+            Anime anim = (Anime) adapterView.getAdapter().getItem(i);
+            String genre = (anim.getGenres() == null) ? null : anim.getGenres().toString();
+            databaseHelper.addAnime(String.valueOf(anim.get_id()), anim.getTitle(), genre, String.valueOf(anim.getEpisodes()), anim.getSynopsis(), "0", "0", anim.getImage());
+            Intent i1 = new Intent(SearchViewActivity.this, MainActivity.class);
+            startActivity(i1);
+        });
     }
 
-    private void filterList(String text)
+    void initWidgets()
     {
+        progressBarSearchView = findViewById(R.id.progressBarSearchView);
+        animeSearchView = findViewById(R.id.animeSearchView);
+        animListViewSearchActivity = findViewById(R.id.animListViewSearchActivity);
+        backBtn = findViewById(R.id.backButtonbtn);
+    }
 
-        ArrayList<Anime> filteredList = new ArrayList<>();
 
-        ArrayList<Anime> test =searchViewAnime;
-
-        if(!test.isEmpty())
-        {
-            for (int i=0; i<test.size(); i++)
-            {
-                if (i==645)
-                {
-                    System.out.println();
-                }
-                if (test.get(i).getTitle().toLowerCase().contains(text.toLowerCase()))
-                {
-                    filteredList.add(test.get(i));
-                }
+    private void setAdapter() {
+        ArrayList<Anime> currentItems = getPaginatedItems();
+        currentItems.sort(new Comparator<Anime>() {
+            @Override
+            public int compare(Anime o1, Anime o2) {
+                return Integer.compare(o1.getRanking(), o2.getRanking());
             }
-        }else
-        {
-            Toast.makeText(this, "Δεν υπάρχουν διαθέσιμα γεγονότα.", Toast.LENGTH_SHORT).show();
+        });
+        adapter = new animeListViewAdapter(SearchViewActivity.this, currentItems, this);
+        animListViewSearchActivity.setDivider(new ColorDrawable(Color.TRANSPARENT));
+        animListViewSearchActivity.setAdapter(adapter);
+
+        Animation cardAnimation = AnimationUtils.loadAnimation(SearchViewActivity.this, R.anim.cardanimation);
+        LayoutAnimationController controller = new LayoutAnimationController(cardAnimation);
+        controller.setDelay(0.2f);
+        animListViewSearchActivity.setLayoutAnimation(controller);
+        animListViewSearchActivity.scheduleLayoutAnimation();
+        animeSearchView.setVisibility(View.VISIBLE);
+        progressBarSearchView.setVisibility(View.GONE);
+    }
+    private ArrayList<Anime> getPaginatedItems() {
+        int start = currentPage * ITEMS_PER_PAGE;
+        int end = Math.min(start + ITEMS_PER_PAGE, searchViewAnime.size());
+        ArrayList<Anime> pageItems = new ArrayList<>(searchViewAnime.subList(start, end));
+        if (end == searchViewAnime.size()) {
+            hasMoreData = false;
+        }
+        return pageItems;
+    }
+
+    private void loadMoreItems() {
+        isLoading = true;
+        currentPage++;
+        ArrayList<Anime> newItems = getPaginatedItems();
+        if (newItems != null && !newItems.isEmpty()) {
+            adapter.addAll(newItems);
+            adapter.notifyDataSetChanged();
+        }
+        isLoading = false;
+    }
+    private void filterList(String text) {
+        ArrayList<Anime> filteredList = new ArrayList<>();
+        for (Anime anime : searchViewAnime) {
+            if (anime.getTitle().toLowerCase().contains(text.toLowerCase())) {
+                filteredList.add(anime);
+            }
         }
 
-
-        if (filteredList.isEmpty())
-        {
+        if (filteredList.isEmpty()) {
             Toast.makeText(this, "Δεν υπάρχουν διαθέσιμα γεγονότα.", Toast.LENGTH_SHORT).show();
-            GlobalFormats.reloadActivity(SearchViewActivity.this);
-        }else
-        {
-            adapter = new animeListViewAdapter(SearchViewActivity.this,filteredList,this);
+        } else {
+            filteredList.sort(new Comparator<Anime>() {
+                @Override
+                public int compare(Anime o1, Anime o2) {
+                    return Integer.compare(o1.getRanking(), o2.getRanking());
+                }
+            });
+            adapter = new animeListViewAdapter(SearchViewActivity.this, filteredList, this);
             animListViewSearchActivity.setDivider(new ColorDrawable(Color.TRANSPARENT));
             animListViewSearchActivity.setAdapter(adapter);
         }
-
-
     }
 }

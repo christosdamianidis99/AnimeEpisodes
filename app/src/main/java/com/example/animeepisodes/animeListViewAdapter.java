@@ -40,11 +40,13 @@ public class animeListViewAdapter extends ArrayAdapter<Anime> {
     DatabaseHelper myDB = new DatabaseHelper(context);
     private Activity activity;
     public static Anime myAnime;
+    private ArrayList<Anime> animeArrayList = new ArrayList<>();
 
 
-    public animeListViewAdapter(@NonNull Context context, List<Anime> animeList, Activity activity) {
+    public animeListViewAdapter(@NonNull Context context, ArrayList<Anime> animeList, Activity activity) {
         super(context, 0, animeList);
         this.activity = activity;
+        this.animeArrayList = animeList;
     }
 
     @NonNull
@@ -53,9 +55,9 @@ public class animeListViewAdapter extends ArrayAdapter<Anime> {
         if (convertView == null) {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.anime_cell_view, parent, false);
         }
+        myAnime = animeArrayList.get(position);
 
-
-        if (MainActivity.MODE == 2) {
+        if (MyAnimeList_activity.MODE == 2) {
             ImageView animeImage = convertView.findViewById(R.id.animeImage);
             ImageButton deleteAnime = convertView.findViewById(R.id.deleteAnime);
             TextView titleTV = convertView.findViewById(R.id.titleTV);
@@ -66,7 +68,6 @@ public class animeListViewAdapter extends ArrayAdapter<Anime> {
             LinearLayout linLayEpSeason = convertView.findViewById(R.id.linLaySeasonEpisode);
 
 
-            myAnime = getItem(position);
             String animeUrlImage = myAnime.getImage();
 
             if (myAnime != null) {
@@ -82,7 +83,7 @@ public class animeListViewAdapter extends ArrayAdapter<Anime> {
                     // Image exists in internal storage; load it
                     Picasso.get().load(imageFile).into(animeImage);
                 } else {
-                    if (isInternetConnected()) {
+                    if (GlobalFormats.isInternetConnected(context)) {
                         // Internet is available; load the image from the internet
                         Picasso.get().load(animeUrlImage).into(animeImage);
 
@@ -110,7 +111,7 @@ public class animeListViewAdapter extends ArrayAdapter<Anime> {
             deleteAnime.setVisibility(View.GONE);
             linLayEpSeason.setVisibility(View.GONE);
 
-        } else if (MainActivity.MODE == 1) {
+        } else if (MyAnimeList_activity.MODE == 1) {
             ImageView animeImage = convertView.findViewById(R.id.animeImage);
             ImageButton deleteAnime = convertView.findViewById(R.id.deleteAnime);
             TextView titleTV = convertView.findViewById(R.id.titleTV);
@@ -123,7 +124,6 @@ public class animeListViewAdapter extends ArrayAdapter<Anime> {
             LinearLayout linLayEpSeason = convertView.findViewById(R.id.linLaySeasonEpisode);
             rankingTv.setVisibility(View.GONE);
 
-            myAnime = getItem(position);
             String animeUrlImage = myAnime.getImage();
 
 
@@ -218,6 +218,17 @@ public class animeListViewAdapter extends ArrayAdapter<Anime> {
     }
 
 
+    public void addAll(ArrayList<Anime> newItems) {
+        // Add new items to the existing list and notify adapter
+        this.animeArrayList.addAll(newItems);
+        notifyDataSetChanged();
+    }
+
+    public void clear() {
+        // Clear the list and notify adapter
+        this.animeArrayList.clear();
+        notifyDataSetChanged();
+    }
 
     void deleteAnimeFromDB(ImageButton deleteAnime) {
 
@@ -284,11 +295,7 @@ public class animeListViewAdapter extends ArrayAdapter<Anime> {
         }).start();
     }
 
-    private boolean isInternetConnected() {
-        ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
-        return networkInfo != null && networkInfo.isConnected();
-    }
+
 
 
 }

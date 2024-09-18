@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/anime_gradient_background"
+    android:padding="16dp">
+
+    <ImageView
+        android:id="@+id/nav_header_image"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_info_navigation_pane"
+        android:layout_gravity="center_horizontal" />
+
+    <TextView
+        android:id="@+id/nav_header_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Inventory"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+        android:layout_gravity="center_horizontal" />
+
+    <TextView
+        android:id="@+id/nav_header_subtitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Select by Genre:"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+        android:layout_gravity="center_horizontal" />
+</LinearLayout>

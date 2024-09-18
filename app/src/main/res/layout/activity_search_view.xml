@@ -1,79 +1,101 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.drawerlayout.widget.DrawerLayout
+    android:id="@+id/drawerLayoutSearchView"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     tools:context=".SearchViewActivity">
 
+    <!-- Main content layout -->
     <LinearLayout
-        android:id="@+id/linToolBar"
         android:layout_width="match_parent"
-        android:layout_height="?actionBarSize"
-        android:orientation="horizontal"
-        android:paddingStart="15dp"
-        android:paddingEnd="15dp">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-
-        <ImageView
-            android:id="@+id/backButtonbtn"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            app:srcCompat="@drawable/backbutton"
-            android:layout_gravity="end|center"
-            app:tint="@color/white"/>
-
-        <View
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1" />
-
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Anime Counter"
-            android:textSize="20sp"
-            android:fontFamily="@font/manga_temple_regular"
-            android:textColor="@color/white"
-            android:layout_gravity="center|center_vertical"/>
-
-        <View
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1" />
-
-
-    </LinearLayout>
-    <androidx.appcompat.widget.SearchView
-        android:id="@+id/animeSearchView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/white"
-        app:iconifiedByDefault="false" />
-    <androidx.coordinatorlayout.widget.CoordinatorLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <ProgressBar
-            android:id="@+id/progressBarSearchView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/animeSearchView"
-            android:layout_gravity="center_horizontal|center_vertical"
-            android:progressBackgroundTint="@color/white"
-            />
         <LinearLayout
+            android:id="@+id/linToolBar"
+            android:layout_width="match_parent"
+            android:layout_height="?actionBarSize"
+            android:orientation="horizontal"
+            android:paddingStart="15dp"
+            android:paddingEnd="15dp">
+
+            <ImageButton
+                android:id="@+id/menuButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/minus_icon"
+            android:background="?attr/selectableItemBackground"
+            android:layout_gravity="start|center_vertical" />
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Anime Counter"
+                android:textSize="20sp"
+                android:fontFamily="@font/manga_temple_regular"
+                android:textColor="@color/white"
+                android:layout_gravity="center|center_vertical" />
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+
+            <ImageView
+                android:id="@+id/backButtonbtn"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                app:srcCompat="@drawable/backbutton"
+                android:layout_gravity="end|center"
+                app:tint="@color/white" />
+        </LinearLayout>
+
+        <androidx.appcompat.widget.SearchView
+            android:id="@+id/animeSearchView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            >
-            <ListView
-                android:id="@+id/animListViewSearchActivity"
+            android:background="@color/white"
+            app:iconifiedByDefault="false" />
+
+        <androidx.coordinatorlayout.widget.CoordinatorLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ProgressBar
+                android:id="@+id/progressBarSearchView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/animeSearchView"
+                android:layout_gravity="center_horizontal|center_vertical"
+                android:progressBackgroundTint="@color/white" />
+
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
-        </LinearLayout>
-    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+                android:layout_height="wrap_content">
 
+                <ListView
+                    android:id="@+id/animListViewSearchActivity"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+            </LinearLayout>
+        </androidx.coordinatorlayout.widget.CoordinatorLayout>
+    </LinearLayout>
 
-</LinearLayout>
+    <!-- Navigation Drawer -->
+    <com.google.android.material.navigation.NavigationView
+        android:id="@+id/nav_view_SearchView"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        app:headerLayout="@layout/nav_header_main"
+        app:menu="@menu/drawer_menu" />
+
+</androidx.drawerlayout.widget.DrawerLayout>

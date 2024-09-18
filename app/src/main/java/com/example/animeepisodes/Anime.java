@@ -11,8 +11,11 @@ private int _id;
 private String title;
     @SerializedName("alternativeTitles:")
 private ArrayList<String> alternativeTitles;
+
+
     @SerializedName("ranking")
 private int ranking;
+
     @SerializedName("genres")
 private ArrayList<String> genres;
     @SerializedName("episodes")
@@ -31,6 +34,7 @@ private String status;
 private String synopsis;
     @SerializedName("thumb")
 private String thumb;
+
     @SerializedName("type")
 private String type;
 
@@ -39,10 +43,10 @@ private String type;
     public Anime() {
     }
 
-    public Anime(int _id, String title, ArrayList<String> alternativeTitles, int episodes, String image, String synopsis,int ranking) {
+    public Anime(int _id, String title, ArrayList<String> genres, int episodes, String image, String synopsis,int ranking) {
         this._id = _id;
         this.title = title;
-        this.alternativeTitles = alternativeTitles;
+        this.genres = genres;
         this.episodes = episodes;
         this.image = image;
         this.synopsis = synopsis;

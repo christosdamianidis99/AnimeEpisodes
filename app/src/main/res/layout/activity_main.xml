@@ -5,80 +5,27 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:gravity="center_vertical"
     tools:context=".MainActivity">
-
-    <LinearLayout
-        android:id="@+id/linToolBar"
-        android:layout_width="match_parent"
-        android:layout_height="?actionBarSize"
-        android:orientation="horizontal"
-        android:paddingStart="15dp"
-        android:paddingEnd="15dp">
-
-
-
-
-        <View
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1" />
-
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Anime Counter"
-            android:textSize="20sp"
-            android:fontFamily="@font/manga_temple_regular"
-            android:textColor="@color/white"
-            android:layout_gravity="center|center_vertical"/>
-
-        <View
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1" />
-
-        <ImageView
-            android:id="@+id/searchMenuBtn"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            app:srcCompat="@drawable/search_icon"
-            android:layout_gravity="end|center"
-            app:tint="@color/white"/>
-    </LinearLayout>
-
-
-
-
-<androidx.coordinatorlayout.widget.CoordinatorLayout
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
-
-
-    <TextView
-        android:id="@+id/emptyTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:text="No animes to show"
-        android:textSize="18sp"
-        android:textColor="@color/white"
-        android:visibility="gone" />
-
-    <ListView
-    android:id="@+id/animListView"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_below="@id/linToolBar"
-    android:layout_marginTop="10dp"/>
     <ProgressBar
         android:id="@+id/progressBar"
+        style="@android:style/Widget.DeviceDefault.Light.ProgressBar.Horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:max="100"
+        android:background="@color/white"
+        android:progress="0" />
+
+    <TextView
+        android:id="@+id/progressPercentage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:visibility="gone"/>
+        android:text="Loading: 0%"
+        android:textColor="@color/white"
+        android:textSize="18sp"
+        android:layout_below="@id/progressBar"
+        android:layout_centerHorizontal="true"
+        android:paddingTop="20dp" />
+
 
 </RelativeLayout>

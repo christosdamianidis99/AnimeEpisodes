@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/nav_top_rated"
+        android:title="Top Rated" />
+
+    <item
+        android:id="@+id/nav_action"
+        android:title="Action" />
+
+    <item
+        android:id="@+id/nav_adventure"
+        android:title="Adventure" />
+
+    <item
+        android:id="@+id/nav_drama"
+        android:title="Drama" />
+
+    <item
+        android:id="@+id/nav_award_winning"
+        android:title="Award winning" />
+
+
+    <item
+        android:id="@+id/nav_suspense"
+        android:title="Suspense" />
+
+
+    <item
+        android:id="@+id/nav_horror"
+        android:title="Drama" />
+
+
+    <item
+        android:id="@+id/nav_comedy"
+        android:title="Comedy" />
+</menu>

@@ -1,0 +1,13 @@
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape>
+            <solid android:color="#FF7F50" /> <!-- Coral: warm and soft on the eyes -->
+        </shape>
+    </item>
+    <item android:top="8dp" android:left="8dp" android:right="8dp" android:bottom="8dp">
+        <shape android:shape="rectangle">
+            <solid android:color="#80000000" />
+            <corners android:radius="16dp" />
+        </shape>
+    </item>
+</layer-list>

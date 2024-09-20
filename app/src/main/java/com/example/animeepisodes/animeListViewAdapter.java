@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -22,12 +23,14 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.squareup.picasso.Callback;
 import com.squareup.picasso.MemoryPolicy;
 import com.squareup.picasso.OkHttp3Downloader;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -128,47 +131,7 @@ public class animeListViewAdapter extends ArrayAdapter<Anime> {
 
 
             if (myAnime != null) {
-                final String filename = "anime_" + myAnime.get_id() + ".png"; // Use myAnime.get_id for unique filenames
-
-                // Check if the image is available in internal storage
-                File imageFile = new File(context.getFilesDir(), filename);
-                if (imageFile.exists()) {
-
-                    // Load the image from internal storage
-                    Picasso.get().load(imageFile).into(animeImage);
-                } else {
-                    // Check for internet connectivity
-                    ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-                    NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
-                    boolean isConnected = (networkInfo != null && networkInfo.isConnected());
-
-                    if (isConnected) {
-                        // Load and cache the image from the internet
-                        Picasso.get().load(animeUrlImage).into(animeImage);
-
-                        // Download and save the image to internal storage in the background
-                        new Thread(new Runnable() {
-                            @Override
-                            public void run() {
-                                try {
-                                    URL url = new URL(animeUrlImage);
-                                    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-                                    InputStream input = connection.getInputStream();
-                                    FileOutputStream output = context.openFileOutput(filename, Context.MODE_PRIVATE);
-                                    byte[] buffer = new byte[1024];
-                                    int len;
-                                    while ((len = input.read(buffer)) != -1) {
-                                        output.write(buffer, 0, len);
-                                    }
-                                    output.close();
-                                    input.close();
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        }).start();
-                    }
-                }
+         setImageFromDB(animeImage,animeUrlImage);
             }
 
 
@@ -195,6 +158,12 @@ public class animeListViewAdapter extends ArrayAdapter<Anime> {
                     episodeCounterEditText.setVisibility(View.VISIBLE);
                     episodeCounterEditText.setText(myAnime.getEpisodeCount());
                     episodeCounter.setVisibility(View.GONE);
+
+                    episodeCounterEditText.requestFocus();
+                    InputMethodManager imm = (InputMethodManager) v.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                    if (imm != null) {
+                        imm.showSoftInput(episodeCounterEditText, InputMethodManager.SHOW_IMPLICIT);
+                    }
                 }
             });
 
@@ -209,6 +178,10 @@ public class animeListViewAdapter extends ArrayAdapter<Anime> {
 
                     episodeCounter.setText(myAnime.getEpisodeCount());
                     myDB.updateEpisode(String.valueOf(myAnime.get_id()), Integer.parseInt(myAnime.getEpisodeCount()));
+                    InputMethodManager imm = (InputMethodManager) v.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                    if (imm != null) {
+                        imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+                    }
 
                 }
             });
@@ -228,6 +201,74 @@ public class animeListViewAdapter extends ArrayAdapter<Anime> {
         // Clear the list and notify adapter
         this.animeArrayList.clear();
         notifyDataSetChanged();
+    }
+
+    private void setImageFromDB(ImageView animeImage, String animeUrlImage) {
+        final String filename = "anime_" + myAnime.get_id() + ".png"; // Use myAnime.get_id for unique filenames
+        File imageFile = new File(context.getFilesDir(), filename);
+
+        if (imageFile.exists()) {
+            Picasso.get().load(imageFile).into(animeImage);
+        } else {
+            loadImageFromNetwork(animeImage, animeUrlImage, filename);
+        }
+    }
+
+    private void loadImageFromNetwork(ImageView animeImage, String animeUrlImage, String filename) {
+        ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+        boolean isConnected = (networkInfo != null && networkInfo.isConnected());
+
+        if (isConnected) {
+            Picasso.get()
+                    .load(animeUrlImage)
+                    .error(R.drawable.placeholder_background) // Use a placeholder for errors
+                    .into(animeImage, new Callback() {
+                        @Override
+                        public void onSuccess() {
+                            // Optionally, handle successful image load
+                        }
+
+                        @Override
+                        public void onError(Exception e) {
+                            e.printStackTrace();
+                        }
+                    });
+
+            new Thread(() -> {
+                InputStream input = null;
+                FileOutputStream output = null;
+                try {
+                    URL url = new URL(animeUrlImage);
+                    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                    connection.connect();
+                    input = connection.getInputStream();
+                    output = context.openFileOutput(filename, Context.MODE_PRIVATE);
+                    byte[] buffer = new byte[1024];
+                    int len;
+                    while ((len = input.read(buffer)) != -1) {
+                        output.write(buffer, 0, len);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                } finally {
+                    if (input != null) {
+                        try {
+                            input.close();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    if (output != null) {
+                        try {
+                            output.close();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }).start();
+        }
     }
 
     void deleteAnimeFromDB(ImageButton deleteAnime) {

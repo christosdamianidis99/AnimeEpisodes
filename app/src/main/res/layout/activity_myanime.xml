@@ -4,19 +4,22 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
-    android:gravity="center"
-    android:padding="16dp"
     tools:context=".MyAnimeList_activity">
 
     <LinearLayout
         android:id="@+id/linToolBar"
         android:layout_width="match_parent"
         android:layout_height="?actionBarSize"
-        android:orientation="horizontal"
         android:paddingStart="15dp"
-        android:paddingEnd="15dp">
-
-
+        android:paddingEnd="15dp"
+        android:orientation="horizontal">
+        <ImageView
+            android:id="@+id/settingsButton"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@drawable/baseline_settings_24"
+        android:layout_gravity="center_vertical"
+        android:contentDescription="Settings" />
         <View
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -26,7 +29,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Anime Counter"
+            android:text="Anime Episode Counter"
             android:textSize="20sp"
             android:fontFamily="@font/manga_temple_regular"
             android:textColor="@color/white"
@@ -37,24 +40,8 @@
             android:layout_height="wrap_content"
             android:layout_weight="1" />
 
-        <ImageView
-            android:id="@+id/searchMenuBtn"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:src="@drawable/search_icon"
-            android:layout_gravity="end|center"
-            app:tint="@color/white" />
+
     </LinearLayout>
-
-
-
-
-    <androidx.coordinatorlayout.widget.CoordinatorLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-
-    </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
 
     <TextView
@@ -79,4 +66,15 @@
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:visibility="gone"/>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabAddAnime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="16dp"
+        android:backgroundTint="@color/white"
+        android:src="@drawable/ic_add" />
+
 </RelativeLayout>

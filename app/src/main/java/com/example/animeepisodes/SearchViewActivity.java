@@ -1,5 +1,6 @@
 package com.example.animeepisodes;
 
+import static com.example.animeepisodes.GlobalFormats.setUpListView;
 import static com.example.animeepisodes.MainActivity.searchViewAnime;
 
 import androidx.activity.OnBackPressedCallback;
@@ -177,15 +178,11 @@ public class SearchViewActivity extends AppCompatActivity {
         ArrayList<Anime> currentItems = getPaginatedItems();
         currentItems.sort((o1, o2) -> Integer.compare(o1.getRanking(), o2.getRanking()));
 
-        adapter = new animeListViewAdapter(SearchViewActivity.this, currentItems, this);
-        animListViewSearchActivity.setDivider(new ColorDrawable(Color.TRANSPARENT));
-        animListViewSearchActivity.setAdapter(adapter);
+        setUpListView(adapter,SearchViewActivity.this,currentItems,this,animListViewSearchActivity);
 
-        Animation cardAnimation = AnimationUtils.loadAnimation(SearchViewActivity.this, R.anim.cardanimation);
-        LayoutAnimationController controller = new LayoutAnimationController(cardAnimation);
-        controller.setDelay(0.2f);
-        animListViewSearchActivity.setLayoutAnimation(controller);
-        animListViewSearchActivity.scheduleLayoutAnimation();
+
+
+
         animeSearchView.setVisibility(View.VISIBLE);
         progressBarSearchView.setVisibility(View.GONE);
     }
@@ -208,9 +205,8 @@ public class SearchViewActivity extends AppCompatActivity {
             runOnUiThread(() -> {
                 if (newItems != null && !newItems.isEmpty()) {
                     if (adapter == null) {
-                        // Handle the case where adapter is not initialized
-                        adapter = new animeListViewAdapter(SearchViewActivity.this, newItems, this);
-                        animListViewSearchActivity.setAdapter(adapter);
+                        new animeListViewAdapter(SearchViewActivity.this, newItems, this);
+
                     } else {
                         adapter.addAll(newItems);
                         adapter.notifyDataSetChanged();
@@ -235,9 +231,8 @@ public class SearchViewActivity extends AppCompatActivity {
                     Toast.makeText(this, "Δεν υπάρχουν διαθέσιμα γεγονότα.", Toast.LENGTH_SHORT).show();
                 } else {
                     filteredList.sort((o1, o2) -> Integer.compare(o1.getRanking(), o2.getRanking()));
-                    adapter = new animeListViewAdapter(SearchViewActivity.this, filteredList, this);
-                    animListViewSearchActivity.setDivider(new ColorDrawable(Color.TRANSPARENT));
-                    animListViewSearchActivity.setAdapter(adapter);
+
+                    setUpListView(adapter,SearchViewActivity.this,filteredList,this,animListViewSearchActivity);
                 }
             });
         }).start();
@@ -260,9 +255,9 @@ public class SearchViewActivity extends AppCompatActivity {
             ArrayList<Anime> sortedList = new ArrayList<>(searchViewAnime);
             sortedList.sort(Comparator.comparingInt(Anime::getRanking)); // Sort
             runOnUiThread(() -> {
-                adapter = new animeListViewAdapter(SearchViewActivity.this, sortedList, this);
-                animListViewSearchActivity.setDivider(new ColorDrawable(Color.TRANSPARENT));
-                animListViewSearchActivity.setAdapter(adapter);
+
+                setUpListView(adapter,SearchViewActivity.this,sortedList,this,animListViewSearchActivity);
+
             });
         }).start();
     }
@@ -293,13 +288,13 @@ public class SearchViewActivity extends AppCompatActivity {
                         hasMoreData = false;
                     }
 
-                    adapter = new animeListViewAdapter(SearchViewActivity.this, pageItems, this);
-                    animListViewSearchActivity.setDivider(new ColorDrawable(Color.TRANSPARENT));
-                    animListViewSearchActivity.setAdapter(adapter);
+                    setUpListView(adapter,SearchViewActivity.this,pageItems,this,animListViewSearchActivity);
                 }
             });
         }).start();
     }
+
+
 
 
 }

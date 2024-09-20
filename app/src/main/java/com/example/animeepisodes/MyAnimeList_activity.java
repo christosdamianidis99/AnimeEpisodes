@@ -1,10 +1,12 @@
 package com.example.animeepisodes;
 
+import static com.example.animeepisodes.GlobalFormats.setUpListView;
+
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
@@ -17,17 +19,20 @@ import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 import java.util.ArrayList;
 
 public class MyAnimeList_activity extends AppCompatActivity {
 
 
 
-    ImageView searchMenuBtn;
+    FloatingActionButton fabAddAnimeButton;
     DatabaseHelper databaseHelper;
     ProgressBar progressBar;
     ListView animeListView;
     TextView emptyTextView;
+    ImageView settingsButton;
 
     public animeListViewAdapter adapter;
     public ArrayList<Anime> myAnime;
@@ -38,19 +43,35 @@ public class MyAnimeList_activity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_myanime);
         initWidget();
+        MediaPlayerManager.initialize(this, R.raw.my_song); // Replace with your actual music file
+        MediaPlayerManager.setVolume(0.5f); // Set initial volume
+        MediaPlayerManager.play();
+
+        // Load saved volume from SharedPreferences
+        SharedPreferences sharedPreferences = getSharedPreferences("app_preferences", MODE_PRIVATE);
+        int savedVolume = sharedPreferences.getInt("music_volume", 50);
+        setVolume(savedVolume);
+
 
 
         databaseHelper = new DatabaseHelper(getApplicationContext());
         MODE = 1;
 
         setListWithMyAnime();
-        searchMenuBtn.setOnClickListener(new View.OnClickListener() {
+        fabAddAnimeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
 
                 Intent i = new Intent(MyAnimeList_activity.this, SearchViewActivity.class);
                 startActivity(i);
+            }
+        });
+        settingsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MyAnimeList_activity.this, activity_settings.class);
+                startActivity(intent);
             }
         });
 
@@ -84,9 +105,9 @@ public class MyAnimeList_activity extends AppCompatActivity {
         animeListView = findViewById(R.id.animListView);
         emptyTextView = findViewById(R.id.emptyTextView);
         progressBar = findViewById(R.id.progressBar);
-
+        settingsButton = findViewById(R.id.settingsButton);
         animeListView.setEmptyView(emptyTextView);
-        searchMenuBtn = findViewById(R.id.searchMenuBtn);
+        fabAddAnimeButton = findViewById(R.id.fabAddAnime);
     }
 
     public void setListWithMyAnime() {
@@ -133,9 +154,8 @@ public class MyAnimeList_activity extends AppCompatActivity {
             }
 
             if (!myAnime.isEmpty()) {
-                adapter = new animeListViewAdapter(MyAnimeList_activity.this, myAnime, this);
-                animeListView.setDivider(new ColorDrawable(Color.TRANSPARENT));
-                animeListView.setAdapter(adapter);
+                setUpListView(adapter,MyAnimeList_activity.this,myAnime,this,animeListView);
+
                 progressBar.setVisibility(View.GONE);
             }
 
@@ -154,5 +174,13 @@ public class MyAnimeList_activity extends AppCompatActivity {
 
 
     }
-
+    private void setVolume(int progress) {
+        float volume = progress / 100f;
+        MediaPlayerManager.setVolume(volume);
+    }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        MediaPlayerManager.release();
+    }
 }

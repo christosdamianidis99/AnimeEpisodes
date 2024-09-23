@@ -86,12 +86,23 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.close();
         return count == 0;
     }
-    void addAnime(String id,String title,String genre,String totalepisodes,String content,String season,String episode,String image)
-    {
+    void addAnime(String id, String title, String genre, String totalepisodes, String content, String season, String episode, String image) {
         SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues cv = new ContentValues();
 
-        cv.put(COLUMN_ID,id);
+        // Check for duplication
+        String query = "SELECT * FROM " + TABLE_NAME + " WHERE " + COLUMN_ID + " = ?";
+        Cursor cursor = db.rawQuery(query, new String[]{id});
+
+        if (cursor != null && cursor.getCount() > 0) {
+            // Entry with this ID already exists
+            Toast.makeText(context, "Data Failed: Duplicate entry for ID " + id, Toast.LENGTH_SHORT).show();
+            cursor.close();
+            return; // Exit the method early
+        }
+
+        // If no duplication, proceed to insert
+        ContentValues cv = new ContentValues();
+        cv.put(COLUMN_ID, id);
         cv.put(COLUMN_TITLE, title);
         cv.put(COLUMN_GENRES, genre);
         cv.put(COLUMN_TOTALEPISODES, totalepisodes);
@@ -99,12 +110,17 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cv.put(COLUMN_EPISODE, episode);
         cv.put(COLUMN_IMAGE, image);
 
-
         long result = db.insert(TABLE_NAME, null, cv);
         if (result == -1) {
-            Toast.makeText(context, "Data Failed,Possible dublication.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, "Data Failed: Insertion error occurred.", Toast.LENGTH_SHORT).show();
+        }
+
+        // Close the cursor
+        if (cursor != null) {
+            cursor.close();
         }
     }
+
 
     void addSearchAnime(String id,String title,String genre,String totalepisodes,String content,String image,String rank)
     {  SQLiteDatabase db = this.getWritableDatabase();

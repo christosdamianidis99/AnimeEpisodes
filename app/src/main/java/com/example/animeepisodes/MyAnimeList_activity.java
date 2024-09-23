@@ -38,7 +38,6 @@ public class MyAnimeList_activity extends AppCompatActivity {
     ProgressBar progressBar;
     ListView animeListView;
     TextView emptyTextView;
-    ImageView settingsButton;
 
 
     public animeListViewAdapter adapter;
@@ -49,14 +48,10 @@ public class MyAnimeList_activity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_myanime);
         initWidget();
-        MediaPlayerManager.initialize(this, R.raw.my_song); // Replace with your actual music file
-        MediaPlayerManager.setVolume(0.5f); // Set initial volume
-        MediaPlayerManager.play();
 
         // Load saved volume from SharedPreferences
         SharedPreferences sharedPreferences = getSharedPreferences("app_preferences", MODE_PRIVATE);
         int savedVolume = sharedPreferences.getInt("music_volume", 50);
-        setVolume(savedVolume);
 
 
 
@@ -73,13 +68,7 @@ public class MyAnimeList_activity extends AppCompatActivity {
                 startActivity(i);
             }
         });
-        settingsButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MyAnimeList_activity.this, activity_settings.class);
-                startActivity(intent);
-            }
-        });
+
 
         getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
             @Override
@@ -111,7 +100,6 @@ public class MyAnimeList_activity extends AppCompatActivity {
         animeListView = findViewById(R.id.animListView);
         emptyTextView = findViewById(R.id.emptyTextView);
         progressBar = findViewById(R.id.progressBar);
-        settingsButton = findViewById(R.id.settingsButton);
         animeListView.setEmptyView(emptyTextView);
         fabAddAnimeButton = findViewById(R.id.fabAddAnime);
     }
@@ -156,15 +144,7 @@ public class MyAnimeList_activity extends AppCompatActivity {
 
 
     }
-    private void setVolume(int progress) {
-        float volume = progress / 100f;
-        MediaPlayerManager.setVolume(volume);
-    }
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        MediaPlayerManager.release();
-    }
+
 
 
 }

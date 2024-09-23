@@ -274,7 +274,6 @@ public class animeListViewAdapter extends ArrayAdapter<Anime> {
     }
 
     void deleteAnimeFromDB(ImageButton deleteAnime, Anime myAnime) {
-
         deleteAnime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -293,29 +292,26 @@ public class animeListViewAdapter extends ArrayAdapter<Anime> {
                     if (isDeleted) {
                         Toast.makeText(context, "Image delete success", Toast.LENGTH_SHORT).show();
                     } else {
-                        // File deletion failed
-                        // Handle the error or log it
                         Toast.makeText(context, "Error image", Toast.LENGTH_SHORT).show();
                     }
-
                 }
-
 
                 // Delete the anime from the database
                 myDB.deleteOneRowAnime(String.valueOf(animeId));
-                MainActivity.refresh(activity);
 
+                // Remove the anime from the adapter's list (animeArrayList)
+                animeArrayList.remove(myAnime);
+
+                // Notify the adapter that the data has changed so it updates the UI
+                animeListViewAdapter.this.notifyDataSetChanged();
+
+                // Optionally refresh the main activity or do any additional UI updates
+                MainActivity.refresh(activity);
             }
         });
-
-
     }
 
-    public void clearFocusOnEpisodeEditText(int position) {
-        View view = getView(position, null, null);
-        EditText episodeCounterEditText = view.findViewById(R.id.episodeCounterEditText);
-        episodeCounterEditText.clearFocus();
-    }
+
 
     private void downloadAndSaveImage(final String imageUrl, final String filename) {
         new Thread(new Runnable() {

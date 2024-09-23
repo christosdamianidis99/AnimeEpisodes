@@ -1,15 +1,19 @@
 package com.example.animeepisodes;
 
+import static com.example.animeepisodes.GlobalFormats.setUpListView;
+
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "AnimeEpisodes.db";
@@ -119,6 +123,51 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             Toast.makeText(context, "Data Failed", Toast.LENGTH_SHORT).show();
         }
 
+    }
+    ArrayList<Anime> readAllAnimeFromDB()
+    {
+      ArrayList<Anime>  myAnime = new ArrayList<>();
+        if (!this.isTableEmpty("my_anime_episodes_db")) {
+            Cursor cursor = readAllAnim();
+            cursor.moveToFirst();
+            if (cursor.isFirst()) {
+                do {
+                    String arrayListString = cursor.getString(2);
+                    ArrayList<String> arrayList = new ArrayList<>();
+                    // Remove the brackets and split the string into an array of values
+                    if (arrayListString == null) {
+                        arrayList = null;
+                    } else {
+                        String withoutBrackets = arrayListString.substring(1, arrayListString.length() - 1);
+                        String[] values = withoutBrackets.split(",\\s*");
+
+            // Create an ArrayList and add the values to it
+
+                        arrayList.addAll(Arrays.asList(values));
+
+                    }
+
+
+                    Anime anime = new Anime(
+                            cursor.getInt(0),
+                            cursor.getString(1),
+                            arrayList,
+                            cursor.getInt(3),
+                            cursor.getString(5),
+                            cursor.getString(4),
+                            cursor.getString(6));
+
+                    myAnime.add(anime);
+                } while (cursor.moveToNext());
+
+
+            }
+
+
+
+        }
+
+        return myAnime;
     }
     Cursor readAllAnim()
     {

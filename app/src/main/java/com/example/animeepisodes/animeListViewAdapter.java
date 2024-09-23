@@ -9,6 +9,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
@@ -28,6 +29,8 @@ import com.squareup.picasso.MemoryPolicy;
 import com.squareup.picasso.OkHttp3Downloader;
 import com.squareup.picasso.Picasso;
 
+import org.w3c.dom.Text;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -42,7 +45,6 @@ public class animeListViewAdapter extends ArrayAdapter<Anime> {
     Context context = this.getContext();
     DatabaseHelper myDB = new DatabaseHelper(context);
     private Activity activity;
-    public static Anime myAnime;
     private ArrayList<Anime> animeArrayList = new ArrayList<>();
 
 
@@ -58,49 +60,55 @@ public class animeListViewAdapter extends ArrayAdapter<Anime> {
         if (convertView == null) {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.anime_cell_view, parent, false);
         }
-        myAnime = animeArrayList.get(position);
+
+        Anime myAnime = animeArrayList.get(position);
+
+
+        ImageView animeImage = convertView.findViewById(R.id.animeImage);
+        ImageButton deleteAnime = convertView.findViewById(R.id.deleteAnime);
+        TextView titleTV = convertView.findViewById(R.id.titleTV);
+        TextView genreTV = convertView.findViewById(R.id.genreTV);
+        TextView contentTV = convertView.findViewById(R.id.contentTV);
+        TextView totalEpisodesTV = convertView.findViewById(R.id.animeTotalEpisodes);
+        TextView rankingTv = convertView.findViewById(R.id.rankingTv);
+        LinearLayout linLayEpSeason = convertView.findViewById(R.id.linLaySeasonEpisode);
+
+        EditText episodeCounterEditText = convertView.findViewById(R.id.episodeCounterEditText);
+        episodeCounterEditText.setText(myAnime.getEpisodeCount());
+
+
+        TextView saveCounterButton = convertView.findViewById(R.id.saveCounterButton);
+
 
         if (MyAnimeList_activity.MODE == 2) {
-            ImageView animeImage = convertView.findViewById(R.id.animeImage);
-            ImageButton deleteAnime = convertView.findViewById(R.id.deleteAnime);
-            TextView titleTV = convertView.findViewById(R.id.titleTV);
-            TextView genreTV = convertView.findViewById(R.id.genreTV);
-            TextView contentTV = convertView.findViewById(R.id.contentTV);
-            TextView totalEpisodesTV = convertView.findViewById(R.id.animeTotalEpisodes);
-            TextView rankingTv = convertView.findViewById(R.id.rankingTv);
-            LinearLayout linLayEpSeason = convertView.findViewById(R.id.linLaySeasonEpisode);
 
 
             String animeUrlImage = myAnime.getImage();
 
-            if (myAnime != null) {
+            // Define the filename for the image associated with this anime
+            final String filename = "anime_" + myAnime.get_id() + ".png";
 
-                // Define the filename for the image associated with this anime
-                final String filename = "anime_" + myAnime.get_id() + ".png";
+            // Check if the image is available in internal storage
+            File imageFile = new File(context.getFilesDir(), filename);
 
-                // Check if the image is available in internal storage
-                File imageFile = new File(context.getFilesDir(), filename);
+            if (imageFile.exists()) {
+                animeImage.setVisibility(View.VISIBLE);
+                // Image exists in internal storage; load it
+                Picasso.get().load(imageFile).into(animeImage);
+            } else {
+                if (GlobalFormats.isInternetConnected(context)) {
+                    // Internet is available; load the image from the internet
+                    Picasso.get().load(animeUrlImage).into(animeImage);
 
-                if (imageFile.exists()) {
-                    animeImage.setVisibility(View.VISIBLE);
-                    // Image exists in internal storage; load it
-                    Picasso.get().load(imageFile).into(animeImage);
+                    // Download and save the image to internal storage in the background
+                    downloadAndSaveImage(animeUrlImage, filename);
                 } else {
-                    if (GlobalFormats.isInternetConnected(context)) {
-                        // Internet is available; load the image from the internet
-                        Picasso.get().load(animeUrlImage).into(animeImage);
-
-                        // Download and save the image to internal storage in the background
-                        downloadAndSaveImage(animeUrlImage, filename);
-                    } else {
-                        // No internet connection; hide the animeImage view
-                        animeImage.setVisibility(View.GONE);
-                    }
+                    // No internet connection; hide the animeImage view
+                    animeImage.setVisibility(View.GONE);
                 }
             }
 
 
-            assert myAnime != null;
             titleTV.setText(myAnime.getTitle());
             if (myAnime.getGenres() == null) {
                 genreTV.setVisibility(View.GONE);
@@ -115,24 +123,11 @@ public class animeListViewAdapter extends ArrayAdapter<Anime> {
             linLayEpSeason.setVisibility(View.GONE);
 
         } else if (MyAnimeList_activity.MODE == 1) {
-            ImageView animeImage = convertView.findViewById(R.id.animeImage);
-            ImageButton deleteAnime = convertView.findViewById(R.id.deleteAnime);
-            TextView titleTV = convertView.findViewById(R.id.titleTV);
-            TextView genreTV = convertView.findViewById(R.id.genreTV);
-            TextView contentTV = convertView.findViewById(R.id.contentTV);
-            TextView rankingTv = convertView.findViewById(R.id.rankingTv);
 
-            TextView totalEpisodesTV = convertView.findViewById(R.id.animeTotalEpisodes);
-            TextView episodeCounter = convertView.findViewById(R.id.episodeCounter);
-            LinearLayout linLayEpSeason = convertView.findViewById(R.id.linLaySeasonEpisode);
             rankingTv.setVisibility(View.GONE);
-
             String animeUrlImage = myAnime.getImage();
 
-
-            if (myAnime != null) {
-         setImageFromDB(animeImage,animeUrlImage);
-            }
+            setImageFromDB(animeImage, animeUrlImage, myAnime);
 
 
             titleTV.setText(myAnime.getTitle());
@@ -144,40 +139,45 @@ public class animeListViewAdapter extends ArrayAdapter<Anime> {
             }
             contentTV.setText(myAnime.getSynopsis());
             totalEpisodesTV.setText(String.valueOf(myAnime.getEpisodes()));
-            episodeCounter.setText(myAnime.getEpisodeCount());
             linLayEpSeason.setVisibility(View.VISIBLE);
-            deleteAnimeFromDB(deleteAnime);
+            deleteAnimeFromDB(deleteAnime, myAnime);
 
-            EditText episodeCounterEditText = convertView.findViewById(R.id.episodeCounterEditText);
-            TextView saveCounterButton = convertView.findViewById(R.id.saveCounterButton);
-
-            episodeCounter.setOnClickListener(new View.OnClickListener() {
+            episodeCounterEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
                 @Override
-                public void onClick(View v) {
+                public void onFocusChange(View v, boolean hasFocus) {
+                    if (!hasFocus) {
+                        String newEpisodeCount = episodeCounterEditText.getText().toString().trim();
+                        if (!newEpisodeCount.isEmpty()) {
+                            // Save the new episode count to the database when focus is lost
+                            myAnime.setEpisodeCount(newEpisodeCount);
+                            myDB.updateEpisode(String.valueOf(myAnime.get_id()), Integer.parseInt(newEpisodeCount));
 
-                    episodeCounterEditText.setVisibility(View.VISIBLE);
-                    episodeCounterEditText.setText(myAnime.getEpisodeCount());
-                    episodeCounter.setVisibility(View.GONE);
+                        }
+                        episodeCounterEditText.setText(myAnime.getEpisodeCount());
+                        episodeCounterEditText.clearFocus();
+                    }else
+                    {
+                        episodeCounterEditText.setText("");
 
-                    episodeCounterEditText.requestFocus();
-                    InputMethodManager imm = (InputMethodManager) v.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-                    if (imm != null) {
-                        imm.showSoftInput(episodeCounterEditText, InputMethodManager.SHOW_IMPLICIT);
+
                     }
                 }
             });
 
+
             saveCounterButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    myAnime.setEpisodeCount(episodeCounterEditText.getText().toString().trim());
+                    if (!(episodeCounterEditText.getText().toString().trim().isEmpty() || episodeCounterEditText.getText().toString().trim()==null)) {
+                        myAnime.setEpisodeCount(episodeCounterEditText.getText().toString().trim());
+                        myDB.updateEpisode(String.valueOf(myAnime.get_id()), Integer.parseInt(myAnime.getEpisodeCount()));
+                        episodeCounterEditText.setText(myAnime.getEpisodeCount());
+                    }
 
 
-                    episodeCounterEditText.setVisibility(View.GONE);
-                    episodeCounter.setVisibility(View.VISIBLE);
+                    episodeCounterEditText.clearFocus();
 
-                    episodeCounter.setText(myAnime.getEpisodeCount());
-                    myDB.updateEpisode(String.valueOf(myAnime.get_id()), Integer.parseInt(myAnime.getEpisodeCount()));
+
                     InputMethodManager imm = (InputMethodManager) v.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
                     if (imm != null) {
                         imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
@@ -185,10 +185,12 @@ public class animeListViewAdapter extends ArrayAdapter<Anime> {
 
                 }
             });
+
         }
 
         return convertView;
     }
+
 
 
     public void addAll(ArrayList<Anime> newItems) {
@@ -203,7 +205,7 @@ public class animeListViewAdapter extends ArrayAdapter<Anime> {
         notifyDataSetChanged();
     }
 
-    private void setImageFromDB(ImageView animeImage, String animeUrlImage) {
+    private void setImageFromDB(ImageView animeImage, String animeUrlImage, Anime myAnime) {
         final String filename = "anime_" + myAnime.get_id() + ".png"; // Use myAnime.get_id for unique filenames
         File imageFile = new File(context.getFilesDir(), filename);
 
@@ -271,7 +273,7 @@ public class animeListViewAdapter extends ArrayAdapter<Anime> {
         }
     }
 
-    void deleteAnimeFromDB(ImageButton deleteAnime) {
+    void deleteAnimeFromDB(ImageButton deleteAnime, Anime myAnime) {
 
         deleteAnime.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -309,7 +311,11 @@ public class animeListViewAdapter extends ArrayAdapter<Anime> {
 
     }
 
-
+    public void clearFocusOnEpisodeEditText(int position) {
+        View view = getView(position, null, null);
+        EditText episodeCounterEditText = view.findViewById(R.id.episodeCounterEditText);
+        episodeCounterEditText.clearFocus();
+    }
 
     private void downloadAndSaveImage(final String imageUrl, final String filename) {
         new Thread(new Runnable() {
@@ -335,8 +341,6 @@ public class animeListViewAdapter extends ArrayAdapter<Anime> {
             }
         }).start();
     }
-
-
 
 
 }

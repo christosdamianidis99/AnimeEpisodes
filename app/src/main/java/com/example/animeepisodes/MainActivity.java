@@ -29,7 +29,7 @@ public class MainActivity extends AppCompatActivity {
     public static ArrayList<Anime> searchViewAnime = new ArrayList<>();
     public static Retrofit retrofit;
     DatabaseHelper databaseHelper;
-
+    public static ArrayList<Anime> savedAnime = new ArrayList<>();
     ProgressBar progressBar;
     TextView progressBarPercentageTV;
     interface RequestDataSearch {
@@ -51,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
         progressBar.setVisibility(View.VISIBLE);
         progressBarPercentageTV.setVisibility(View.VISIBLE);
 
+        savedAnime = databaseHelper.readAllAnimeFromDB();
         setRetrofit();
         // Register the onBackPressed callback
         getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {

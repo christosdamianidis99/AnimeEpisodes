@@ -1,15 +1,21 @@
 package com.example.animeepisodes;
 
 import static com.example.animeepisodes.GlobalFormats.setUpListView;
+import static com.example.animeepisodes.MainActivity.savedAnime;
 
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.view.animation.LayoutAnimationController;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -34,8 +40,8 @@ public class MyAnimeList_activity extends AppCompatActivity {
     TextView emptyTextView;
     ImageView settingsButton;
 
+
     public animeListViewAdapter adapter;
-    public ArrayList<Anime> myAnime;
     public static int MODE;
 
     @Override
@@ -111,56 +117,32 @@ public class MyAnimeList_activity extends AppCompatActivity {
     }
 
     public void setListWithMyAnime() {
-        myAnime = new ArrayList<>();
         // Show ProgressBar while loading
         progressBar.setVisibility(View.VISIBLE);
 
-        if (!databaseHelper.isTableEmpty("my_anime_episodes_db")) {
-            Cursor cursor = databaseHelper.readAllAnim();
-            cursor.moveToFirst();
-            if (cursor.isFirst()) {
-                do {
-                    String arrayListString = cursor.getString(2);
-                    ArrayList<String> arrayList = new ArrayList<>();
-                    // Remove the brackets and split the string into an array of values
-                    if (arrayListString == null) {
-                        arrayList = null;
-                    } else {
-                        String withoutBrackets = arrayListString.substring(1, arrayListString.length() - 1);
-                        String[] values = withoutBrackets.split(",\\s*");
 
-// Create an ArrayList and add the values to it
+            if (!savedAnime.isEmpty()) {
 
-                        for (String value : values) {
-                            arrayList.add(value);
-                        }
+                adapter = new animeListViewAdapter(this, savedAnime, this);
+                animeListView.setAdapter(adapter);
+                animeListView.setDivider(new ColorDrawable(Color.TRANSPARENT));
+                animeListView.setDividerHeight(16);
 
-                    }
-
-
-                    Anime anime = new Anime(
-                            cursor.getInt(0),
-                            cursor.getString(1),
-                            arrayList,
-                            cursor.getInt(3),
-                            cursor.getString(5),
-                            cursor.getString(4),
-                            cursor.getString(6));
-
-                    myAnime.add(anime);
-                } while (cursor.moveToNext());
-
-
-            }
-
-            if (!myAnime.isEmpty()) {
-                setUpListView(adapter,MyAnimeList_activity.this,myAnime,this,animeListView);
+                if (!(MyAnimeList_activity.MODE == 1))
+                {
+                    Animation cardAnimation = AnimationUtils.loadAnimation(this, R.anim.bounce_animation);
+                    LayoutAnimationController controller = new LayoutAnimationController(cardAnimation);
+                    controller.setDelay(0.2f);
+                    animeListView.setLayoutAnimation(controller);
+                    animeListView.scheduleLayoutAnimation();
+                }
+                //setUpListView(adapter,MyAnimeList_activity.this,savedAnime,this,animeListView);
 
                 progressBar.setVisibility(View.GONE);
             }
 
 
-        } else {
+         else {
             Handler handler = new Handler();
 
             handler.postDelayed(new Runnable() {
@@ -183,4 +165,6 @@ public class MyAnimeList_activity extends AppCompatActivity {
         super.onDestroy();
         MediaPlayerManager.release();
     }
+
+
 }

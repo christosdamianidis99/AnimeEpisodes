@@ -102,7 +102,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         long result = db.insert(TABLE_NAME, null, cv);
         if (result == -1) {
-            Toast.makeText(context, "Data Failed", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, "Data Failed,Possible dublication.", Toast.LENGTH_SHORT).show();
         }
     }
 

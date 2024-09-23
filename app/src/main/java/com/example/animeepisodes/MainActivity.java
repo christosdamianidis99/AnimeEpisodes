@@ -51,7 +51,6 @@ public class MainActivity extends AppCompatActivity {
         progressBar.setVisibility(View.VISIBLE);
         progressBarPercentageTV.setVisibility(View.VISIBLE);
 
-        savedAnime = databaseHelper.readAllAnimeFromDB();
         setRetrofit();
         // Register the onBackPressed callback
         getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {

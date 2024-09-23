@@ -3,6 +3,7 @@ package com.example.animeepisodes;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Handler;
@@ -46,14 +47,20 @@ public class animeListViewAdapter extends ArrayAdapter<Anime> {
     DatabaseHelper myDB = new DatabaseHelper(context);
     private Activity activity;
     private ArrayList<Anime> animeArrayList = new ArrayList<>();
+    private boolean[] selectedItems;
 
 
-    public animeListViewAdapter(@NonNull Context context, ArrayList<Anime> animeList, Activity activity) {
-        super(context, 0, animeList);
-        this.activity = activity;
-        this.animeArrayList = animeList;
-    }
-
+//    public animeListViewAdapter(@NonNull Context context, ArrayList<Anime> animeList, Activity activity) {
+//        super(context, 0, animeList);
+//        this.activity = activity;
+//        this.animeArrayList = animeList;
+//    }
+public animeListViewAdapter(@NonNull Context context, ArrayList<Anime> animeList, Activity activity) {
+    super(context, 0, animeList);
+    this.activity = activity;
+    this.animeArrayList = animeList;
+    this.selectedItems = new boolean[animeList.size()]; // Initialize selection array
+}
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
@@ -78,6 +85,7 @@ public class animeListViewAdapter extends ArrayAdapter<Anime> {
 
 
         TextView saveCounterButton = convertView.findViewById(R.id.saveCounterButton);
+
 
 
         if (MyAnimeList_activity.MODE == 2) {
@@ -188,6 +196,52 @@ public class animeListViewAdapter extends ArrayAdapter<Anime> {
 
         }
 
+
+
+
+        convertView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+
+                String genre = (myAnime.getGenres() == null) ? null : myAnime.getGenres().toString();
+                myDB.addAnime(String.valueOf(myAnime.get_id()), myAnime.getTitle(), genre, String.valueOf(myAnime.getEpisodes()), myAnime.getSynopsis(), "0", "0", myAnime.getImage());
+                Intent i1 = new Intent(activity.getApplicationContext(), MainActivity.class);
+                activity.startActivity(i1);
+            }
+        });
+
+
+
+        // Set background color based on selection state
+        if (selectedItems[position]) {
+            convertView.setBackgroundColor(Color.LTGRAY); // Selected state
+        } else {
+
+            convertView.setBackgroundColor(Color.TRANSPARENT); // Default state
+        }
+
+
+
+        // Handle long press to toggle selection
+        convertView.setOnLongClickListener(v -> {
+            selectedItems[position] = !selectedItems[position]; // Toggle selection
+            notifyDataSetChanged(); // Refresh the ListView
+            return true; // Consume the event
+        });
+
+
+        if (SearchViewActivity.saveSelectedAnime != null)
+        {
+        if (!hasSelectedItems())
+        {
+            SearchViewActivity.saveSelectedAnime.setVisibility(View.GONE);
+
+        }else
+        {
+            SearchViewActivity.saveSelectedAnime.setVisibility(View.VISIBLE);
+        }
+        }
         return convertView;
     }
 
@@ -312,6 +366,14 @@ public class animeListViewAdapter extends ArrayAdapter<Anime> {
     }
 
 
+    private boolean hasSelectedItems() {
+        for (boolean selected : selectedItems) {
+            if (selected) {
+                return true; // Return true if at least one item is selected
+            }
+        }
+        return false; // Return false if none are selected
+    }
 
     private void downloadAndSaveImage(final String imageUrl, final String filename) {
         new Thread(new Runnable() {
@@ -338,5 +400,14 @@ public class animeListViewAdapter extends ArrayAdapter<Anime> {
         }).start();
     }
 
-
+    // Method to get selected items
+    public ArrayList<Anime> getSelectedItems() {
+        ArrayList<Anime> selectedAnimes = new ArrayList<>();
+        for (int i = 0; i < selectedItems.length; i++) {
+            if (selectedItems[i]) {
+                selectedAnimes.add(animeArrayList.get(i));
+            }
+        }
+        return selectedAnimes;
+    }
 }

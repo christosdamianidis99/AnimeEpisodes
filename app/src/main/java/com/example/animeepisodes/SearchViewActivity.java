@@ -41,6 +41,7 @@ public class SearchViewActivity extends AppCompatActivity {
 
     SearchView animeSearchView;
     ImageView backBtn;
+    public  static  ImageView saveSelectedAnime;
     ListView animListViewSearchActivity;
     ProgressBar progressBarSearchView;
     private animeListViewAdapter adapter;
@@ -59,7 +60,7 @@ public class SearchViewActivity extends AppCompatActivity {
         setContentView(R.layout.activity_search_view);
         initWidgets();
         setupInitialData();
-        setSearchViewClickListener();
+        //setSearchViewClickListener();
         databaseHelper = new DatabaseHelper(getApplicationContext());
 
 
@@ -150,13 +151,35 @@ public class SearchViewActivity extends AppCompatActivity {
                 }
             }
         });
+
+
+
+
+
+
+
+        saveSelectedAnime.setOnClickListener(v -> {
+            adapter =(animeListViewAdapter) animListViewSearchActivity.getAdapter();
+
+            ArrayList<Anime> selectedAnimes = adapter.getSelectedItems();
+            for (Anime anime : selectedAnimes) {
+                // Save each selected anime to the SAVED ANIME table
+                String genre = (anime.getGenres() == null) ? null : anime.getGenres().toString();
+
+                databaseHelper.addAnime(String.valueOf(anime.get_id()),anime.getTitle(), genre, String.valueOf(anime.getEpisodes()), anime.getSynopsis(), "0", "0", anime.getImage());
+            }
+            Intent i = new Intent(SearchViewActivity.this,MyAnimeList_activity.class);
+            startActivity(i);
+            //Toast.makeText(this, "Selected anime saved!", Toast.LENGTH_SHORT).show();
+        });
+
     }
 
     private void initWidgets() {
         drawerLayout = findViewById(R.id.drawerLayoutSearchView);
         navigationView = findViewById(R.id.nav_view_SearchView);
         menuButton = findViewById(R.id.menuButton);
-
+        saveSelectedAnime=findViewById(R.id.saveSelectedAnime);
         progressBarSearchView = findViewById(R.id.progressBarSearchView);
         animeSearchView = findViewById(R.id.animeSearchView);
         animListViewSearchActivity = findViewById(R.id.animListViewSearchActivity);
@@ -246,6 +269,8 @@ public class SearchViewActivity extends AppCompatActivity {
             Intent i1 = new Intent(SearchViewActivity.this, MainActivity.class);
             startActivity(i1);
         });
+
+
     }
 
 

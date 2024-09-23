@@ -49,13 +49,10 @@ public class MyAnimeList_activity extends AppCompatActivity {
         setContentView(R.layout.activity_myanime);
         initWidget();
 
-        // Load saved volume from SharedPreferences
-        SharedPreferences sharedPreferences = getSharedPreferences("app_preferences", MODE_PRIVATE);
-        int savedVolume = sharedPreferences.getInt("music_volume", 50);
-
-
 
         databaseHelper = new DatabaseHelper(getApplicationContext());
+        savedAnime = databaseHelper.readAllAnimeFromDB();
+
         MODE = 1;
 
         setListWithMyAnime();

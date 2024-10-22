@@ -25,7 +25,7 @@ Users can browse a list of anime, select their favorites, and organize them base
 ## Installation
 -**Clone the Repository**
 
-git clone https://github.com/yourusername/your-repo-name.git
+git clone https://github.com/yourusername/AnimeEpisodes.git
 cd your-repo-name
 
 -**Open the Project**
@@ -67,3 +67,10 @@ Contributions are welcome! If you find any bugs or have suggestions for improvem
 -**Anime DB API**: Provided by BrianRofiq.
 
 -**RapidAPI**: For API hosting and management.
+
+
+## Screenshots
+
+| List View of All Anime | Episode Counter | Navigation Pane |
+|------------------------|------------------|------------------|
+| <img src="assets/ListViewAllAnimeFromApi.jpg" alt="List View of All Anime" width="200"/> | <img src="assets/ListViewCounter.jpg" alt="Episode Counter" width="200"/> | <img src="assets/NavigationPane.jpg" alt="Navigation Pane" width="200"/> |
